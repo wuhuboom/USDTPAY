@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>用户列表</title>
+    <link rel="stylesheet" href="../../assets/libs/layui/css/layui.css"/>
+    <script type="text/javascript">
+        document.write("<link rel='stylesheet' href='../../assets/module/admin.css?ttv="+Math.random()+"'>");
+    </script>
+    <script type="text/javascript">
+        document.write('<script src="../../assets/js/moment.js?ttv='+new Date().getTime()+'" type="text/javascript" ><\/script>');
+    </script>
+    <style>
+
+        .currSerachBtn {
+            box-shadow: 0 15px 18px -6px rgb(45 140 240 / 65%) !important;
+        }
+
+        .currReloadBtn {
+            box-shadow: 0 15px 18px -6px rgb(146 109 222 / 65%) !important;
+        }
+
+        .layui-table-cell {
+            height: 46px;
+            line-height: 46px;
+
+            /*height: auto ;*/
+            /*white-space: normal;*/
+            /*word-wrap:break-word;*/
+        }
+
+
+    </style>
+
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+
+            <!-- 表格工具栏 -->
+            <form class="layui-form toolbar">
+                <div class="layui-form-item" style="margin-left: -40px">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="username" name="username" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">地址</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="address" name="address" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">余额 >= </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="money" name="money" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" >类型</label>
+                        <div class="layui-input-inline">
+                            <select name="kinds" id="kinds" lay-filter="kinds">
+                                <option value="888888">全部</option>
+                                <option value="1">专属</option>
+                                <option value="2">池地址</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="startDate" name="startDate" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="endDate" name="endDate" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">&emsp;
+                        <button class="layui-btn icon-btn currSerachBtn" lay-filter="userTbSearch" lay-submit
+                                style="margin-left: 20px">
+                            <i class="layui-icon">&#xe615;</i>搜索
+                        </button>
+                        <button class="layui-btn icon-btn currReloadBtn" lay-filter="reloadData" lay-submit
+                                style="background-color: #926dde;border-color: #926dde;">
+                            <i class="layui-icon layui-icon-refresh"></i>刷新数据
+                        </button>
+                        <button class="layui-btn icon-btn currReloadBtn" lay-filter="reloadDataForMoney" lay-submit
+                                style="background-color: #926dde;border-color: #926dde;">
+                            <i class="layui-icon layui-icon-refresh"></i>更新所有余额
+                        </button>
+                        <button class="layui-btn icon-btn currReloadBtn" id="updateSingleMoney" lay-submit style="background-color: #926dde;border-color: #926dde;"> 更新单个余额
+                        </button>
+
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">其他操作</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+
+                <!--                    <div class="layui-inline">-->
+
+                <!--                        <label class="layui-form-label">IP地址</label>-->
+
+                <!--                        <div class="layui-input-inline">-->
+
+                <!--                            <input type="text" id="ipaddress"  autocomplete="off" class="layui-input" value="127.0.0.1:7777">-->
+
+                <!--                        </div>-->
+
+                <!--                    </div>-->
+
+                <div class="layui-inline">
+
+                    <label class="layui-form-label">gas</label>
+
+                    <div class="layui-input-inline">
+
+                        <input type="text" id="gas" autocomplete="off" class="layui-input" value="10">
+
+                    </div>
+
+                </div>
+
+                <div class="layui-inline">
+
+                    <label class="layui-form-label">min</label>
+
+                    <div class="layui-input-inline">
+
+                        <input type="text" id="min" autocomplete="off" class="layui-input" value="2000">
+
+                    </div>
+
+                </div>
+
+
+                <div class="layui-inline">
+
+                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" id="addAddress"
+                            lay-event="addAddress"> 添加地址
+
+                    </button>
+
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="color: red">总余额:</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="AllMoney" autocomplete="off" class="layui-input" readonly="readonly"
+                               value="">
+                    </div>
+
+                </div>
+
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" id="updateMoney"
+                            lay-event="updateMoney"> 更新余额
+                    </button>
+                </div>
+
+
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+
+                    <label class="layui-form-label">addr</label>
+
+                    <div class="layui-input-inline" style="width: 420px">
+
+                        <!--                        <input type="text" id="addr" autocomplete="off" class="layui-input" value="" >-->
+                        <textarea placeholder="请输入内容" id="addr" class="layui-textarea"
+                                  style="width: 400px;height: 40px!important;"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn " lay-event="add" id="showZjgj">
+                        资金归集
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-body">
+
+            <!-- 数据表格 -->
+            <table id="userTable" lay-filter="userTable" style="margin-top:10px"></table>
+        </div>
+    </div>
+</div>
+
+
+<!-- js部分 -->
+<script type="text/javascript" src="../../assets/libs/layui/layui.js"></script>
+<!--<script type="text/javascript" src="../../assets/js/common.js?v=318"></script>-->
+<script type="text/javascript">
+    document.write('<script src="../../assets/js/common.js?ttv='+new Date().getTime()+'" type="text/javascript" ><\/script>');
+</script>
+
+<script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../assets/js/jquery.cookie.min.js"></script>
+<!--<script type="text/javascript" src="../../assets/js/config.url.js"></script>-->
+<script type="text/javascript">
+    document.write('<script src="../../assets/js/config.url.js?timestamp='+new Date().getTime()+'" type="text/javascript" charset="utf-8"><\/script>');
+</script>
+
+
+
+<!--数据表格操作工具栏-->
+<script type="text/html" id="orderListBar">
+    <a class="layui-btn layui-btn-sm " lay-event="accountChangebtn"><i class="layui-icon layui-icon-gift"></i>账变</a>
+    <!--    <a class="layui-btn layui-btn-xs " lay-event="rechargebtn"><i class="layui-icon">&#xe605;</i>充值</a>-->
+    <!--    <a class="layui-btn layui-btn-xs " lay-event="changebtn"><i class="layui-icon">&#xe605;</i>修改</a>-->
+    <!--    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delbtn"><i class="layui-icon">&#x1006;</i>删除</a>-->
+</script>
+
+
+<script>
+
+    var mybck = $.cookie('tokenMybUP');
+    //alert(document.cookie);
+    // console.log(mybck)
+    if (mybck == "" || mybck == null) {
+
+        window.top.location.href = "../../login.html";
+
+    } else {
+
+        var jsondata;
+        var bankListArr = []
+
+        var currDateVal
+        var currDateVal_end
+        var local_storage_key = 'admin_usdtpay_toAddress_t_list';
+        layui.use(['layer', 'form', 'table', 'util', 'admin', 'xmSelect', 'notice', 'treeTable', 'laydate'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var table = layui.table;
+            var util = layui.util;
+            var admin = layui.admin;
+            var xmSelect = layui.xmSelect;
+            var notice = layui.notice;
+            var treeTable = layui.treeTable
+            var laydate = layui.laydate;
+
+            // 获取余额接口
+            // $.ajax({
+            //     url: global_requestAddressJs_getAllMoney,
+            //     headers:{
+            //         token:mybck,
+            //     },
+            //     type: "get",
+            //     dataType: "json",
+            //     success: function (data) {
+            //         if (data.code === 200) {
+            //             $("#AllMoney").val(data.result)
+            //         }
+            //
+            //     },
+            //     error: function (data) {
+            //         layer.alert(JSON.stringify(data), {
+            //             title: data
+            //         });
+            //     }
+            //
+            // });
+
+
+            //开始日期组件常规用法
+            laydate.render({
+                elem: '#start_time'
+                , isInitValue: true
+                , theme: 'molv'
+                , type: 'datetime'
+                , done: function (value, date) {//选中后的回调
+                    // layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+                    // console.log("自带的",date)
+                    // console.log("jquery",$("#buildDate").val())
+                    currDateVal = ""
+                    currDateVal = value
+                }
+            });
+
+
+            //结束日期组件常规用法
+            laydate.render({
+                elem: '#end_time'
+                , isInitValue: true
+                , theme: 'molv'
+                , type: 'datetime'
+                , done: function (value, date) {//选中后的回调
+                    // layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+                    // console.log("自带的",date)
+                    // console.log("jquery",$("#buildDate").val())
+                    currDateVal_end = ""
+                    currDateVal_end = value
+                }
+            });
+
+
+            // //回调状态
+            // let loadU_callback = localStorage.getItem('pay_order_where_callback')
+            // $("#callback").val(loadU_callback)
+
+            //重新渲染生效
+            form.render();
+            //
+            var request_param = {};
+            // request_param['kinds'] = 1;
+            // log_login_request_param['token']= $.cookie('tokenMybUP');
+            // var currTempObj = {}
+            request_param.action = 'check'
+            // currTempObj.token = $.cookie('tokenMybUP');
+
+
+            /* 渲染表格 */
+            var tableCols = tableSetCol(getTableCols(), local_storage_key);
+            var insTb = table.render({
+                elem: '#userTable',
+                url:  global_requestAddressJs_toAddress ,
+                method: 'post',
+                headers: {
+                    token: mybck
+                },
+                // response: {
+                //     statusCode: 200,
+                //     dataName: 'result',
+                // },
+                toolbar: true,
+                defaultToolbar: ['filter'],
+                where: request_param,
+                // toolbar: ['<p>',
+                //     '<button lay-event="add" class="layui-btn layui-btn-sm icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>&nbsp;',
+                //     '<button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
+                //     '</p>'].join(''),
+                cellMinWidth: 100,
+                page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                    //,curr: 5 //设定初始在第 5 页
+                    , groups: 10 //只显示 1 个连续页码
+                    , first: "首页" //不显示首页
+                    , last: "尾页"//不显示尾页
+                },
+                height: "full-150",
+                limit: 20,
+                limits: [20, 30, 50, 100, 500, 2000],
+                // id : "systemLog",
+                cols: tableCols,
+                done: function (res, curr, count) {
+                    $('tr').css({'background-color': '#fff', 'color': '#191a1c'});
+
+                    tableDone(this.elem, insTb.config.cols[0], local_storage_key)
+
+                    //重新渲染 固定写法
+                    form.render("select");
+
+
+                    // $(".layui-table-main tr").each(function (index, val) {
+                    //     $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                    //     $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                    // });
+
+                }
+            });
+
+
+            //layui表格渲染后，事件需要重新绑定，并记录下筛选信息于localStorage
+            function tableDone(elem, col, key) {
+                elem.next().find('[lay-event="LAYTABLE_COLS"]').click(function (e) {
+                    setTimeout(function () {
+                        layui.$(e.currentTarget).find('.layui-form-checkbox').click(function () {
+                            var local_config = {};
+                            for (var i = 0; i <= col.length - 1; i++) {
+                                if (typeof col[i].field !== 'undefined') {
+                                    local_config[col[i].field] = col[i].hide;
+                                }
+                            }
+                            var saveColsConfig = {
+                                key: 'local_config',
+                                value: local_config
+                            };
+
+                            // console.log("saveColsConfig",saveColsConfig)
+                            layui.data(key, saveColsConfig);
+                        })
+                    }, 50);
+                })
+            }
+
+            //表格 头部数据函数封装
+            function getTableCols() {
+                var col = [[
+                    // {type: "checkbox", width: 50},
+                    {field: 'id', width: 80, title: 'ID', align: "center", sort: true},
+                    {field: 'username', width: 300, title: '用户名', align: "center"},
+                    {field: 'address', width: 300, title: '地址', sort: true, align: "center"},
+                    {field: 'money', width: 300, title: '账户余额', align: "center"},
+                    {field: 'receive_nums', width: 150, title: '充值次数', sort: true, align: "center"},
+                    {field: 'last_get_account', width: 150, title: '最后一次充值金额', align: "center"},
+                    {
+                        field: 'kinds', width: 100, title: '类型', align: "center", templet: function (d) {
+                            var state = "";
+
+                            if (d.kinds == "1") {//1 专属
+                                state = '<button class="layui-btn layui-btn-xs" style="background-color: #FF5722">' + '专属' + '</button>';
+                            } else if (d.kinds == "2") {//2池地址
+                                state = '<button class="layui-btn layui-btn-xs" style="background-color: #61ff22" >' + '池地址' + '</button>';
+                            }
+                            return state;
+                        }
+
+                    },
+                    {
+                        field: 'created', width: 200, title: '入库时间', align: "center", templet: function (d) {
+                            // return util.toDateString(d.Created * 1000);
+                            return moment(d.created * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
+                        }, sort: true
+                    },
+                    {
+                        field: 'updated', width: 200, title: '更新时间', align: "center", templet: function (d) {
+                            // return util.toDateString(d.Updated * 1000);
+                            return moment(d.updated * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
+                        }, sort: true
+                    },
+                    {title: '操作', width:130, templet:'#orderListBar',fixed:"right",align:"center"}
+                ]]
+                return col;
+            }
+
+            //layuitable reload或第一次加载的时候，根据存储的local_config 确定哪些列是否选中
+            function tableSetCol(col, key) {
+                let colArr = col[0]
+                var config_custom = layui.data(key);
+                var local_config = config_custom['local_config'] || {};
+                if (JSON.stringify(local_config) != '{}') {
+                    for (var i = 0; i <= colArr.length - 1; i++) {
+                        if (typeof colArr[i].field !== "undefined") {
+                            colArr[i].hide = local_config[colArr[i].field];
+                        }
+                    }
+                }
+                return [colArr];
+            }
+
+
+            //添加银行
+            $("#addGropeTask").click(function () {
+
+                var index = layui.layer.open({
+                    area: ['500px', '500px'],
+                    fixed: false, //不固定
+                    maxmin: false,
+                    title: "添加银行卡",
+                    skin: 'layui-layer-rim',//加上边框
+                    type: 2,
+                    content: "bank_card_add.html",
+                    success: function (layero, index) {
+                        var body = layui.layer.getChildFrame('body', index);
+
+                    },
+                    end: function () {//弹窗关闭后的回调函数
+                        //利用laypage实现局部刷新,以下两种方式都可以
+                        // $(".layui-laypage-btn").click()
+                        //直接刷新当前修改的行
+                        $(".layui-laypage-btn")[0].click()
+
+                    }
+                })
+                // window.sessionStorage.setItem("index",index);
+                // //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+                // $(window).on("resize",function(){
+                //     layui.layer.full(window.sessionStorage.getItem("index"));
+                // })
+
+
+                return false
+            })
+
+            /* 表格搜索 */
+            var currTempObj;
+            var bet_tb_this;
+            form.on('submit(userTbSearch)', function (data) {
+
+
+                // console.log("dataa",dataa)
+                // console.log("currTempObj",data.field.username)
+                // insTb.reload({where: data.field, page: {curr: 1}});
+                currTempObj = {}
+                currTempObj.action = "check"
+                // currTempObj.token = $.cookie('tokenMybUP');
+
+                let resultObj = data.field
+                // console.log("result",resultObj)
+
+                if (resultObj.money) {
+
+                    currTempObj.money = resultObj.money
+                }
+
+                if (resultObj.username) {
+                    currTempObj.username = resultObj.username
+                }
+
+                if (resultObj.address) {
+                    currTempObj.address = resultObj.address
+                }
+
+                if (resultObj.kinds && resultObj.kinds != 888888) {
+                    currTempObj.kinds = resultObj.kinds
+                }
+
+                if (resultObj.startDate && resultObj.endDate) {
+                    currTempObj.start_time = get_unix_time(resultObj.startDate)
+                    currTempObj.end_time = get_unix_time(resultObj.endDate)
+                } else if (!resultObj.startDate && resultObj.endDate) {
+                    currTempObj.start_time = 0
+                    currTempObj.end_time = get_unix_time(resultObj.endDate)
+                    // console.log("getDateFromString",get_unix_time(resultObj.endDate))
+                } else if (resultObj.startDate && !resultObj.endDate) {
+                    currTempObj.start_time = get_unix_time(resultObj.startDate)
+                    currTempObj.end_time = parseInt(Date.now() / 1000)
+                }
+
+
+
+                //2.6.0之前清除保留之前的数据的最有用的方式
+                if (bet_tb_this != null) {
+                    // console.log("book_tb_this--不为null",bet_tb_this)
+                    bet_tb_this.where = {};  //置空where
+                }
+                insTb.reload({
+                    where: currTempObj,
+                    page: {curr: 1},
+                    done: function () {
+                        bet_tb_this = this;
+                        // console.log("book_tb_this----重载后的值",bet_tb_this)
+                    }
+                }, false);
+
+
+                return false;
+            });
+
+
+            //下拉框选择事件
+            form.on("select(templetBankSel)", function (data) {
+                //获取当前行tr对象
+                var elem = data.othis.parents('tr');
+                //第一列的值是Guid，取guid来判断
+                var Guid = elem.first().find('td').eq(0).text();
+                //选择的select对象值；
+                var selectValue = data.value;
+                // console.log("data",Guid)
+
+                var param = {};
+                param['id'] = Guid;
+                param['bank_information_id'] = selectValue;
+
+                $.ajax({
+                    url: global_requestAddress + global_requestAddress_js_bank + "?action=update",
+                    data: param,
+                    headers: {
+                        token: mybck
+                    },
+                    type: "POST",
+                    dataType: "json",
+                    success: function (addResult) {
+
+                        if (addResult.code === 200) {
+                            notice.msg(addResult.msg, {icon: 1});
+
+                        } else {
+                            // layer.msg(addResult.msg);
+                            notice.msg(addResult.msg, {icon: 2});
+                        }
+
+
+                    },
+
+
+                });
+
+            })
+
+            //更新所有余额
+            form.on('submit(reloadDataForMoney)', function (data) {
+                let resultField = data.field
+                // console.log("resultField",resultField)
+                var request_param = {};
+                request_param.action = "updateMoney"
+
+                // currTempObj.token = $.cookie('tokenMybUP');
+                $.ajax({
+                    url: global_requestAddressJs_toAddress,
+                    type: "post",
+                    headers:{
+                        token:mybck,
+                    },
+                    data: request_param,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code === 200) {
+                            layer.msg(data.msg,{icon:1})
+                            // layer.msg("执行成功!")
+                            insTb.reload({
+                                where: {...currTempObj}
+                                , page: {curr: 1},
+                                done: function () {
+                                    bet_tb_this = this;
+                                    // console.log("book_tb_this----重载后的值",bet_tb_this)
+
+                                }
+                            });
+                        } else {
+                            // layer.msg("更新失败")
+                            layer.msg("更新失败!",{icon:2})
+                        }
+                    },
+                    error: function (data) {
+                        layer.alert(JSON.stringify(data), {
+                            title: data
+                        });
+
+                    }
+
+                });
+
+                return false;
+            });
+
+
+            //更新单个余额
+            $("#updateSingleMoney").click(function () {
+
+                if(!$("#address").val()){
+                    layer.msg("地址不能为空!",{icon:2})
+                    return  false
+                }
+
+                var request_param = {};
+                request_param.action = "updateMoney"
+                request_param.address = $("#address").val()
+
+
+                $.ajax({
+                    url: global_requestAddressJs_toAddress,
+                    type: "post",
+                    headers:{
+                        token:mybck,
+                    },
+                    data:request_param,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code === 200) {
+                            layer.msg(data.msg,{icon:1})
+                            insTb.reload({page: {curr: 1}});
+                        } else {
+                            layer.msg("更新失败",{icon:2})
+                        }
+                    },
+                    error: function (data) {
+
+                    }
+
+                });
+                return false
+            })
+
+
+
+            /* 表格工具条点击事件 */
+            table.on('tool(userTable)', function (obj) {
+
+
+
+                var currDatas = obj.data;
+                if (obj.event === 'accountChangebtn') { // 修改
+                    // showEditModel(obj.data);
+
+                    jsondata = JSON.stringify(currDatas)
+                    var index = layui.layer.open({
+                        area: ['1200px', '500px'],
+                        fixed: false, //不固定
+                        maxmin: false,
+                        title: "当前会员账变记录列表",
+                        skin: 'layui-layer-rim',//加上边框
+                        type: 2,
+                        content: "change.html",
+                        success: function (layero, index) {
+                            // var body = layui.layer.getChildFrame('body', index);
+
+                        },
+                        end: function () {//弹窗关闭后的回调函数
+                            //利用laypage实现局部刷新,以下两种方式都可以
+                            // $(".layui-laypage-btn").click()
+                            //直接刷新当前修改的行
+                            // $(".layui-laypage-btn")[0].click()
+
+                        }
+                    })
+                    // window.sessionStorage.setItem("index", index);
+                    // //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+                    // $(window).on("resize", function () {
+                    //     layui.layer.full(window.sessionStorage.getItem("index"));
+                    // })
+
+
+                } else if (obj.event === 'redo') {
+
+                    var messageTitle = '系统将对该数据进行冲正操作,确定对当前数据进行冲正吗?';
+                    layer.open({
+                        // type: 2,
+                        area: ['450px', '195px'],
+                        fix: false,
+                        //不固定
+                        maxmin: true,
+                        shade: 0.3,
+                        skin: 'layui-layer-rim',//加上边框
+                        title: "温馨提示",
+                        content:messageTitle,
+                        // content: `<div>`+messageTitle+`</div>`,
+                        btn: ['确定','取消'],
+                        // // 弹层外区域关闭
+                        shadeClose: true,
+                        btn1: function(index, layero) {//确定事件
+                            //点击第一个按钮处理逻辑
+                            // layer.msg("1");
+                            //进行ajax请求
+                            var param={};
+                            //这个就是当前那条数据的ID
+                            param.id =currDatas.ID
+
+                            $.ajax({
+                                url:global_requestAddress+global_requestAddress_js_collectionOperation+"?action=striking",
+                                method:'POST',
+                                data:param,
+                                dataType:"json",
+                                headers:{
+                                    token:mybck,
+                                },
+                                success:function (res) {
+                                    if(res.code === 200){  //
+                                        notice.msg(res.msg, {icon: 1});
+                                        //列表的刷新
+                                        insTb.reload();
+                                        //关闭第一个弹窗的组件ID
+                                        layer.close(index);
+                                    }else{
+                                        notice.msg(res.msg, {icon: 2});
+                                        insTb.reload();
+                                        layer.close(index);
+                                    }
+                                }
+                            })
+                        },
+                        btn2: function(index, layero){//取消事件
+                            //点击第二个按钮处理逻辑
+                            // layer.msg("2");
+
+                            notice.msg("取消操作", {icon: 5});
+                            form.render();
+                            layer.close(index);
+                        },
+                        cancel: function(index, layero){//取消事件
+                            //点击第二个按钮处理逻辑
+                            // layer.msg("2");
+                            notice.msg("取消操作", {icon: 5});
+                            form.render();
+                            layer.close(index);
+                        }
+                    })
+
+
+                }
+
+
+            });
+
+
+            // 资金归集
+            $("#showZjgj").click(function () {
+
+
+                let addressStr = $("#addr").val()
+                let addressArray = addressStr.split("\n")
+                // let addressArrayToStr = addressArray.toString()
+                // addressArrayToStr = "["+addressArrayToStr+"]"
+
+                let tempStr = ""
+                addressArray.forEach((item, index) => {
+                    // tempStr = tempStr + '"' + item + '",'
+                    tempStr = tempStr + item + '@'
+                })
+
+                tempStr = tempStr.substring(0, tempStr.length - 1)
+
+                // tempStr = tempStr + ']'
+                console.log("tempStr", tempStr)
+
+                let paramUrl = global_requestAddressJs_toAddress
+                // paramUrl = paramUrl + $("#ipaddress").val() + '/collect'
+                paramUrl = paramUrl + "?gas=" + $("#gas").val() + "000000"
+                paramUrl = paramUrl + "&min=" + $("#min").val() + "000000"
+                paramUrl = paramUrl + "&ts=" + Date.now()
+                paramUrl = paramUrl + "&addr=" + tempStr
+
+                var request_param = {};
+                request_param.action = "collectByYourself"
+                request_param.gas = $("#gas").val() + "000000"
+                request_param.min = $("#min").val() + "000000"
+                request_param.ts = Date.now()
+                request_param.addr = tempStr
+
+
+                $.ajax({
+                    url: global_requestAddressJs_toAddress,
+                    type: 'post',
+                    headers:{
+                        token:mybck,
+                    },
+                    data:request_param,
+                    dataType: "json",
+                    success: function (resultJson) {
+                        if (resultJson.code === 200) {
+                            layer.alert("归集成功,请5分钟后在查看!")
+                            $('#showZjgj').css("background-color", "#FBFBFB");
+                            $('#showZjgj').css("color", "#930e0e");
+                            $('#showZjgj').attr("disabled", true);
+                            var timer = setInterval(() => {
+                                if (timeNum === 0) {
+                                    clearInterval(timer);
+                                    let showText = '资金归集';
+                                    $('#showZjgj').css("background-color", "#43AEFE");
+                                    $('#showZjgj').css("color", "#FFFFFF");
+                                    $('#showZjgj').text(showText)
+                                    $('#showZjgj').attr("disabled", false);
+                                    timeNum = 10;
+                                } else {
+                                    let showText = '资金归集剩余' + timeNum + '秒可进行操作';
+                                    $('#showZjgj').text(showText)
+                                    timeNum--;
+                                }
+                            }, 1000);
+                        } else {
+                            layer.alert("归集失败,请检查端口是否正确")
+                        }
+
+
+                    },
+
+
+                });
+
+
+                return false
+            })
+
+
+            // 添加地址
+            $("#addAddress").click(function () {
+                layer.alert("没接口！")
+                // $.ajax({
+                //     url: global_requestAddressJs_getReceiveAddress + "?action=ADD",
+                //     type: "get",
+                //     headers:{
+                //         token:mybck,
+                //     },
+                //     dataType: "json",
+                //     success: function (data) {
+                //         if (data.code === 200) {
+                //             layer.msg("添加成功");
+                //         }
+                //
+                //         insTb.reload({
+                //             // where: {...currTempObj} ,
+                //             page: {curr: 1},
+                //             done: function () {
+                //                 // bet_tb_this = this;
+                //                 // console.log("book_tb_this----重载后的值",bet_tb_this)
+                //             }
+                //         });
+                //
+                //     },
+                //     error: function (data) {
+                //         layer.alert(JSON.stringify(data), {
+                //             title: data
+                //         });
+                //
+                //     }
+                //
+                // });
+
+
+                return false
+            })
+
+
+            $("#updateMoney").click(function () {
+
+                layer.alert("没接口！")
+                //
+                // $.ajax({
+                //     url: global_requestAddressJs_getAllMoney,
+                //     headers:{
+                //         token:mybck,
+                //     },
+                //     type: "get",
+                //     dataType: "json",
+                //     success: function (data) {
+                //         if (data.code === 200) {
+                //             $("#AllMoney").val(data.result)
+                //             layer.msg("更新成功")
+                //         } else {
+                //             layer.msg("更新失败")
+                //         }
+                //     },
+                //     error: function (data) {
+                //         layer.alert(JSON.stringify(data), {
+                //             title: data
+                //         });
+                //
+                //     }
+                //
+                // });
+
+                return false
+            })
+
+
+
+
+        });
+
+    }
+
+
+</script>
+</body>
+</html>

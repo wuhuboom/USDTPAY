@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="./assets/libs/layui/css/layui.css"/>
+<!--    <link rel="stylesheet" href="./assets/module/admin.css?v=318"/>-->
+    <script type="text/javascript">
+        document.write("<link rel='stylesheet' href='./assets/module/admin.css?ttv="+Math.random()+"'>");
+    </script>
+
+    <!-- js部分 -->
+    <script type="text/javascript" src="./assets/libs/layui/layui.js"></script>
+<!--    <script type="text/javascript" src="./assets/js/common.js?v=318"></script>-->
+
+    <script type="text/javascript">
+        document.write('<script src="./assets/js/common.js?ttv='+new Date().getTime()+'" type="text/javascript" ><\/script>');
+        document.write('<script src="./assets/js/config.url.js?timestamp='+new Date().getTime()+'" type="text/javascript" charset="utf-8"><\/script>');
+    </script>
+
+<!--    <script type="text/javascript" src="./assets/js/config.url.js"></script>-->
+    <script type="text/javascript" src="./assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="./assets/js/jquery.cookie.min.js"></script>
+
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="width:100%;margin-top: 20px">
+    <div class="layui-form-item layui-row layui-col-xs12" style="display: flex;flex-direction: column;align-items: center;justify-content: center">
+        <div>扫码绑定后输入验证码提交验证~</div>
+        <div style="margin-top: 20px">
+<!--           <div id="qrcodeDiv"></div>-->
+            <img id="qrcodeImg" width="180px" height="180px"/>
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12" style="display: flex;flex-direction: row;align-items: center;justify-content: center">
+        <div>Google验证码</div>
+        <div style="margin-left: 10px">
+            <input type="text" class="layui-input " id="googleCode" placeholder="请在此输入Google验证码" maxlength="6">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-lg" lay-filter="comfireAdd" id="comfireAdd">验证</button>
+            <button class="layui-btn layui-btn-lg layui-btn-primary" lay-filter="cancelAdd" id="cancelAdd">取消</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+
+    // var mybck = $.cookie('tokenMybUP');
+    // console.log("1111",mybck)
+    // if (mybck == "" || mybck == null) {
+    //
+    //     console.log("2222",mybck)
+    //     // window.top.location.href = "../../login.html";
+    //
+    // } else {
+    //
+    //
+    // }
+
+
+    var currParentDatas = eval('(' + parent.jsondata + ')')
+    // console.log("currParentDatas",currParentDatas)
+    // console.log("src",currParentDatas.imgs)
+    $("#qrcodeImg").attr('src',currParentDatas.imgs)
+    layui.use(['layer', 'form', 'table', 'util', 'admin', 'xmSelect', 'notice','QRCode'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        // var layer = parent.layer === undefined ? layui.layer : top.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var util = layui.util;
+        var admin = layui.admin;
+        var xmSelect = layui.xmSelect;
+        var notice = layui.notice;
+        var QRCode = layui.QRCode;
+
+        // // 二维码
+        // var demoQrCode = new QRCode(document.getElementById("qrcodeDiv"), {
+        //     text: currParentDatas.imgs,
+        //     width: 101,  // 宽度
+        //     height: 101,  // 高度
+        //     colorDark: "#000000",  // 颜色
+        //     colorLight: "#ffffff",  // 背景颜色
+        //     correctLevel: QRCode.CorrectLevel.H
+        // });
+        //
+
+        //确认按钮点击事件(这个功能已经实现,但是不知道是否接口问题,暂时修改无效)
+        $("#comfireAdd").click(function () {
+
+            if(!$("#googleCode").val()){
+
+                layer.msg("谷歌验证码不能为空！", {icon: 2, time: 1500}, function () {
+                });
+
+                return  false
+            }
+
+            var requestParam = {}
+            var admin_username = currParentDatas.admin_u
+            var admin_password =currParentDatas.admin_p
+            var admin_googleSecret = currParentDatas.secret
+            var admin_googleCode  =$("#googleCode").val()
+            var admin_requestUrl = global_requestAddressJs_login+"?username="+admin_username+"&password="+admin_password+"&googleCode="+admin_googleCode+"&googleSecret="+admin_googleSecret
+
+            $.ajax({
+                url:  admin_requestUrl ,
+                // headers: {
+                //     "token": mybck,
+                // },
+                // data: requestParam,
+                type:"get",
+                dataType: "json",
+                success: function (addResult) {
+
+                    if (addResult.code === 2000) {
+
+                        //调用声明好的方法
+                        window.parent.success(addResult);
+
+                        setTimeout(function () {
+                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            parent.layer.close(index);
+                            // window.parent.location.reload();
+                        }, 1300)
+
+                        // var millisecond = new Date().getTime();
+                        // var expiresTime = new Date(millisecond + 60 * 1000 * 60);
+                        // // console.log("菜单",res.result.Menu,JSON.stringify(res.result.Menu))
+                        // if(addResult.result.Menu){
+                        //     localStorage.setItem('menuList',JSON.stringify(addResult.result.Menu))
+                        // }else{
+                        //     localStorage.setItem('menuList',[])
+                        // }
+                        //
+                        //
+                        // //取出token
+                        // var tokenCK  =  addResult.result.Token
+                        // //存起来
+                        // JsSetCookie('tokenMybUP',tokenCK);
+                        // //弹窗
+                        // layer.msg("登录成功", {icon: 1, time: 1500}, function () {
+                        //
+                        //     window.location.href = "./index.html";
+                        // });
+
+                    } else if(addResult.code === -104) {
+                        layer.msg(addResult.msg, {icon: 2, time: 1500}, function () {
+                        });
+
+                    }else {
+                        layer.msg(addResult.msg, {icon: 2, time: 1500}, function () {
+                        });
+                        setTimeout(function () {
+                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            parent.layer.close(index);
+                            // window.parent.location.reload();
+                        }, 1300)
+                    }
+
+                },
+            });
+            // parent.local.reload();
+            return false;
+        })
+
+        //添加内容点击事件
+        $("#cancelAdd").click(function () {
+
+            // layer.msg("取消操作");
+            notice.msg('取消操作!', {icon: 5});
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);
+            // window.parent.location.reload();
+
+
+            return false;
+
+        })
+
+        //设置CK方法
+        function JsSetCookie(name,value)//两个参数，一个是cookie名称，一个是值
+        {
+            var millisecond = new Date().getTime();
+            var expiresTime = new Date(millisecond + 60 * 1000 * 60 * 24 );
+            document.cookie = name + "="+ escape (value) + ";expires=" + expiresTime.toGMTString();
+        }
+
+    })
+
+</script>
+</body>
+</html>

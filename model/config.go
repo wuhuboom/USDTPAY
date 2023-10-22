@@ -11,6 +11,7 @@ type Config struct {
 	Expiration   int64   `gorm:"default:30" json:"expiration"`  //通用池子的订单过期时间  30 分钟
 	PondAmount   float64 `gorm:"default:5" json:"pondAmount"`   //池子的金额分界点  5U
 	GoogleSwitch int     `gorm:"default:1" json:"googleSwitch"` //谷歌开光 默认1关闭 2开启
+	SkinTemplate string  `json:"skin_template"`                 //皮肤选择
 }
 
 // CheckIsExistModelConfig CheckIsExistModelAdmin 创建

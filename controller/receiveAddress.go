@@ -13,7 +13,6 @@ import (
 	"math"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -150,20 +149,21 @@ func ToAddress(c *gin.Context) {
 		return
 	}
 	//资金归集
-	if action == "getBalanceChange" {
+	if action == "collectByYourself" {
 		req := make(map[string]interface{})
-		req["gas"] = c.PostForm("gas")
-		req["min"] = c.PostForm("min")
+		req["gas"], _ = strconv.ParseInt(c.PostForm("gas"), 10, 64)
+		req["min"], _ = strconv.ParseInt(c.PostForm("min"), 10, 64)
 		if req["gas"] == "" || req["min"] == "" {
 			tools.ReturnError101(c, "非法参数")
 			return
 		}
-		if addr, isExits := c.GetPostForm("addr"); isExits == true {
-			if addr != "" {
-				addArray := strings.Split(addr, "@")
-				req["addrs"] = addArray
-			}
-		}
+		//if addr, isExits := c.GetPostForm("addr"); isExits == true {
+		//	if addr != "" {
+		//		addArray := strings.Split(addr, "@")
+		//		req["addr"] = addArray
+		//	}
+		//}
+		req["addr"] = c.PostForm("addr")
 		req["ts"] = time.Now().UnixMilli()
 		_, err := tools.HttpRequest(viper.GetString("project.ThreeUrl")+"/collect", req, viper.GetString("project.ApiKey"))
 		if err != nil {
