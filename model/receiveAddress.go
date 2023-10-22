@@ -14,14 +14,14 @@ import (
 type ReceiveAddress struct {
 	ID                  int     `gorm:"primaryKey;comment:'主键'" json:"id"`
 	Username            string  `gorm:"uniqueIndex" json:"username"`
-	ReceiveNums         int     `json:"receive_nums"`                             //收款笔数
-	LastGetAccount      float64 `gorm:"type:decimal(10,2)" json:"lastGetAccount"` //最后一次的入账金额
-	Address             string  `gorm:"uniqueIndex" json:"address"`               //收账地址
-	Money               float64 `gorm:"type:decimal(10,2)" json:"money"`          //账户余额
-	TheLastGetMoneyTime int64   `gorm:"default:0" json:"theLastGetMoneyTime"`     //最后一次获取余额的时间
-	Kinds               int     `gorm:"default:1" json:"kinds"`                   //地址类型  1普通玩家地址  2 池地址
-	LastUseTime         int64   `gorm:"default:0" json:"lastUseTime"`             // 最后一次使用时间
-	Status              int     `gorm:"default:1" json:"status"`                  // 1状态正常 2   关闭
+	ReceiveNums         int     `json:"receive_nums"`                                //收款笔数
+	LastGetAccount      float64 `gorm:"type:decimal(10,2)"  json:"last_get_account"` //最后一次的入账金额
+	Address             string  `gorm:"uniqueIndex" json:"address"`                  //收账地址
+	Money               float64 `gorm:"type:decimal(10,2)" json:"money"`             //账户余额
+	TheLastGetMoneyTime int64   `gorm:"default:0" json:"the_last_get_money_time"`    //最后一次获取余额的时间
+	Kinds               int     `gorm:"default:1" json:"kinds"`                      //地址类型  1普通玩家地址  2 池地址
+	LastUseTime         int64   `gorm:"default:0" json:"lastUseTime"`                // 最后一次使用时间
+	Status              int     `gorm:"default:1" json:"status"`                     // 1状态正常 2   关闭
 	Created             int64   `json:"created"`
 	Updated             int64   `json:"updated"`
 }

@@ -1,7 +1,7 @@
 # 程序基本配置
 project:
   listeningPort: 7777  # 监听端口号
-  port: 8080
+  port: 7777
   portFile: "Project.sock"
   name: "USDTPAY"
   limitIp: 2
@@ -19,19 +19,19 @@ log:
   max_backups: 7 #备份数量
 
 #数据库 配置
-mysql:
-  host: "127.0.0.1"
-  port: "3306"
-  user: "root"
-  password: "123456789"
-  dbname: "paymentplatform"
-
 #mysql:
 #  host: "127.0.0.1"
 #  port: "3306"
-#  user: "paymentplatform"
-#  password: "paymentplatform"
+#  user: "root"
+#  password: "123456789"
 #  dbname: "paymentplatform"
+
+mysql:
+  host: "127.0.0.1"
+  port: "3306"
+  user: "paymentplatform"
+  password: "paymentplatform"
+  dbname: "paymentplatform"
 
 #redis  配置
 redis:

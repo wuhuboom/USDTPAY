@@ -17,11 +17,11 @@ type Data struct {
 	Balance     string `json:"balance" binding:"required"`
 }
 
-type GetPayInformationBackData struct {
-	Type string `json:"type" binding:"required"`
-	Data Data   `json:"data" binding:"required"`
-	Sign string `json:"sign" binding:"required"`
-}
+//type GetPayInformationBackData struct {
+//	Type string `json:"type" binding:"required"`
+//	Data Data   `json:"data" binding:"required"`
+//	Sign string `json:"sign" binding:"required"`
+//}
 
 type BalanceType struct {
 	Data struct {
@@ -29,6 +29,21 @@ type BalanceType struct {
 		Balance string `json:"balance"`
 		Seq     int64  `json:"seq"`
 		User    string `json:"user"`
+	} `json:"data"`
+	Type string `json:"type"`
+}
+
+type GetPayInformationBackData struct {
+	Data struct {
+		TxHash      string `json:"txHash"`
+		BlockNumber int    `json:"blockNumber"`
+		Timestamp   int64  `json:"timestamp"`
+		From        string `json:"from"`
+		To          string `json:"to"`
+		Amount      string `json:"amount"`
+		Token       string `json:"token"`
+		UserId      string `json:"userId"`
+		Balance     string `json:"balance"`
 	} `json:"data"`
 	Type string `json:"type"`
 }

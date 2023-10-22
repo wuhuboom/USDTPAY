@@ -8,7 +8,7 @@ import (
 
 type Menu struct {
 	ID            int    `json:"id" gorm:"primaryKey;comment:'主键'"`
-	Name          string `json:"name" gorm:"uniqueIndex"`
+	Name          string `json:"name"`
 	Belong        int    `json:"belong" `                    //0顶级菜单
 	Path          string `json:"path"`                       //路劲配置
 	MenuKind      int    `json:"menu_kind" gorm:"default:1"` //菜单类型 1 菜单 2功能
@@ -40,7 +40,7 @@ func CheckIsExistModelMenu(db *gorm.DB) {
 			{
 				me = append(me, Menu{ID: 5101, Name: "查看", Belong: 510, Created: time.Now().Unix(), Path: "/order/topUpOrder", MenuKind: 2, Action: "check"})
 				me = append(me, Menu{ID: 5102, Name: "修改", Belong: 510, Created: time.Now().Unix(), Path: "/order/topUpOrder", MenuKind: 2, Action: "update"})
-				me = append(me, Menu{ID: 5103, Name: "回调订单", Belong: 510, Created: time.Now().Unix(), Path: "/order/orderBack", MenuKind: 2, Action: "orderBack"})
+				me = append(me, Menu{ID: 5103, Name: "回调订单", Belong: 510, Created: time.Now().Unix(), Path: "/order/topUpOrder", MenuKind: 2, Action: "orderBack"})
 
 			}
 		}

@@ -87,8 +87,8 @@ func TopUpOrder(c *gin.Context) {
 		return
 	}
 	if action == "update" {
-		remark := c.Query("remark")
-		id := c.Query("id")
+		remark := c.PostForm("remark")
+		id := c.PostForm("id")
 		if remark == "" || id == "" {
 			tools.ReturnError101(c, "remark is not  null")
 			return

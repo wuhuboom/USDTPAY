@@ -49,12 +49,11 @@ func CheckIsExistModelPrepaidPhoneOrders(db *gorm.DB) {
 
 // IfUseThisTxHash 是否存在这个Hash 值
 func (p *PrepaidPhoneOrders) IfUseThisTxHash(db *gorm.DB) bool {
-	err := db.Where("tx_hash=?", p.TxHash).First(p).Error
-	if err == nil {
-		//存在这个hash
-		return true
+	affected := db.Where("tx_hash=?", p.TxHash).Limit(1).Find(&PrepaidPhoneOrders{}).RowsAffected
+	if affected == 0 {
+		return false
 	}
-	return false
+	return true
 }
 
 // UpdateMaxCreatedOfStatusToTwo 专属地址回调
@@ -81,7 +80,7 @@ func (p *PrepaidPhoneOrders) UpdateMaxCreatedOfStatusToTwo(db *gorm.DB, OrderEff
 				ThreeBack:         2,
 				Status:            2,
 				AccountPractical:  p.AccountPractical,
-				CollectionAddress: p.CollectionAddress}
+				CollectionAddress: p.CollectionAddress, TxHash: p.TxHash}
 			if pp.BackUrl != "" {
 				var tt Create
 				tt.PlatformOrder = pp.PlatformOrder
@@ -122,6 +121,7 @@ func (p *PrepaidPhoneOrders) UpdateMaxCreatedOfStatusToTwo(db *gorm.DB, OrderEff
 	pt.RechargeAddress = p.RechargeAddress
 	pt.CollectionAddress = p.CollectionAddress
 	pt.Date = time.Now().Format("2006-01-02")
+	pt.TxHash = p.TxHash
 	db.Save(&pt)
 	return false
 }
@@ -196,6 +196,7 @@ func (p *PrepaidPhoneOrders) UpdatePondOrderCratedAndUpdated(db *gorm.DB) bool {
 	pt.RechargeAddress = p.RechargeAddress
 	pt.CollectionAddress = p.CollectionAddress
 	pt.Date = time.Now().Format("2006-01-02")
+	pt.TxHash = p.TxHash
 	db.Save(&pt)
 	return true
 }

@@ -92,7 +92,7 @@ func ToAddress(c *gin.Context) {
 	if action == "updateMoney" {
 		re := make([]model.ReceiveAddress, 0)
 		if Address, isE := c.GetPostForm("address"); isE == true {
-			tools.ReturnError200(c, "执行成功")
+			//tools.ReturnError200(c, "执行成功")
 			one := model.ReceiveAddress{}
 			mysql.DB.Where("address=?", Address).First(&one)
 			re = append(re, one)
