@@ -24,7 +24,7 @@ type PrepaidPhoneOrders struct {
 	AccountOrders     float64 `gorm:"type:decimal(10,2)" json:"account_orders"`    //充值金额 (订单金额)
 	AccountPractical  float64 `gorm:"type:decimal(10,2)" json:"account_practical"` //充值金额(实际返回金额)
 	Status            int     `json:"status"`                                      //订单状态  1 未支付  2已经支付了  3已经失效
-	ThreeBack         int     `json:"three_back"`                                  //三方回调 1未回调  2已结回调
+	ThreeBack         int     `json:"three_back" gorm:"default:1"`                 //三方回调 1未回调  2已结回调
 	Created           int64   `json:"created"`                                     //订单创建时间
 	Updated           int64   `json:"updated"`                                     //更新时间(回调时间)
 	Successfully      int64   `json:"successfully"`                                //交易成功 时间(区块时间戳)

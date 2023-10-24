@@ -75,3 +75,46 @@ func Login(c *gin.Context) {
 }
 
 // 获取菜单
+
+// ConsoleManagement 控制台查看
+func ConsoleManagement(c *gin.Context) {
+	action := c.PostForm("action")
+	if action == "check" {
+		var Data ConsoleManagementData
+		//今日成功订单个数
+		mysql.DB.Model(&model.PrepaidPhoneOrders{}).
+			Where("status =? and date =?", 2, time.Now().Format("2006-01-02")).
+			Count(&Data.TodayPullOrderCountAndSuccess)
+		//今日拉去订单个数
+		mysql.DB.Model(&model.PrepaidPhoneOrders{}).
+			Where("date =?", time.Now().Format("2006-01-02")).
+			Count(&Data.TodayPullOrderCount)
+		//今日拉起订单金额
+		mysql.DB.Table("prepaid_phone_orders").Where("date =?", time.Now().Format("2006-01-02")).Select("sum(account_orders) as today_pull_order_amount").Scan(&Data)
+		//今日成功订单金额
+		mysql.DB.Table("prepaid_phone_orders").Where("date =? and status=?", time.Now().Format("2006-01-02"), 2).Select("sum(account_practical) as today_pull_order_amount_and_success").Scan(&Data)
+		//今日订单支付成功率
+		if Data.TodayPullOrderCount == 0 {
+			Data.TodaySuccessPer = 0
+		} else {
+			Data.TodaySuccessPer = float64(Data.TodayPullOrderCountAndSuccess / Data.TodayPullOrderCount)
+		}
+		//总成功订单个数
+		mysql.DB.Model(&model.PrepaidPhoneOrders{}).Where("status =? ", 2).Count(&Data.AllPullOrderCount)
+		//总订单数
+		mysql.DB.Model(&model.PrepaidPhoneOrders{}).Count(&Data.AllPullOrderCount)
+		//总拉起订单金额
+		mysql.DB.Table("prepaid_phone_orders").Select("sum(account_orders) as all_pull_order_amount").Scan(&Data)
+		//总成功订单金额
+		mysql.DB.Table("prepaid_phone_orders").Where("status =?", 2).Select("sum(account_practical) as all_pull_order_amount_and_success").Scan(&Data)
+		if Data.AllPullOrderCount == 0 {
+			Data.AllSuccessPer = 0
+		} else {
+			Data.AllSuccessPer = float64(Data.AllPullOrderCountAndSuccess / Data.AllPullOrderCount)
+		}
+
+		tools.ReturnError200Data(c, Data, "success")
+		return
+	}
+
+}

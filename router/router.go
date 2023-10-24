@@ -34,7 +34,10 @@ func Setup() *gin.Engine {
 			GroupV2.POST("/getPayInformation", three.GetPayInformationBack)
 		}
 	}
-
+	pageFist := r.Group("controller").Use(PermissionToCheck()).Use(PermissionToCheck())
+	{
+		pageFist.POST("fistPage", controller.ConsoleManagement)
+	}
 	//系统管理
 	system := r.Group("system").Use(PermissionToCheck()).Use(PathUrlToCheck())
 	{

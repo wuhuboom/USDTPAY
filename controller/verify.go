@@ -98,3 +98,16 @@ type Ta2 struct {
 		} `json:"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"`
 	} `json:"contractInfo"`
 }
+
+type ConsoleManagementData struct {
+	TodayPullOrderCount            int64   `json:"today_pull_order_count"`              //今日拉单总数
+	TodayPullOrderCountAndSuccess  int64   `json:"today_pull_order_count_and_success"`  //今日成功支付笔数
+	TodayPullOrderAmount           float64 `json:"today_pull_order_amount"`             //今日拉单总金额
+	TodayPullOrderAmountAndSuccess float64 `json:"today_pull_order_amount_and_success"` //今日收取金额
+	TodaySuccessPer                float64 `json:"today_success_per"`                   //今日订单支付成功率
+	AllPullOrderCount              int64   `json:"all_pull_order_count"`                //总拉单总数
+	AllPullOrderCountAndSuccess    int64   `json:"all_pull_order_count_and_success"`    //总成功支付笔数
+	AllPullOrderAmount             float64 `json:"all_pull_order_amount"`               //总拉单总金额
+	AllPullOrderAmountAndSuccess   float64 `json:"all_pull_order_amount_and_success"`   //总收取金额
+	AllSuccessPer                  float64 `json:"all_success_per"`                     //总成功率
+}

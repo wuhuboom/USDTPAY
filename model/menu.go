@@ -54,6 +54,7 @@ func CheckIsExistModelMenu(db *gorm.DB) {
 				me = append(me, Menu{ID: 6102, Name: "查看账变", Belong: 610, Created: time.Now().Unix(), Path: "/address/toAddress", MenuKind: 2, Action: "getBalanceChange"})
 				me = append(me, Menu{ID: 6103, Name: "更新余额", Belong: 610, Created: time.Now().Unix(), Path: "/address/toAddress", MenuKind: 2, Action: "updateMoney"})
 				me = append(me, Menu{ID: 6104, Name: "资金归集", Belong: 610, Created: time.Now().Unix(), Path: "/address/toAddress", MenuKind: 2, Action: "collectByYourself"})
+				me = append(me, Menu{ID: 6105, Name: "获取总余额", Belong: 610, Created: time.Now().Unix(), Path: "/address/toAddress", MenuKind: 2, Action: "getAllMoney"})
 
 			}
 		}

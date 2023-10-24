@@ -68,6 +68,16 @@
                         </div>
                     </div>
                     <div class="layui-inline">
+                        <label class="layui-form-label" >状态</label>
+                        <div class="layui-input-inline">
+                            <select name="status" id="status" lay-filter="status">
+                                <option value="777777">全部</option>
+                                <option value="1">正常</option>
+                                <option value="2">关闭</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
                         <label class="layui-form-label" >类型</label>
                         <div class="layui-input-inline">
                             <select name="kinds" id="kinds" lay-filter="kinds">
@@ -435,6 +445,19 @@
 
                     },
                     {
+                        field: 'status', width: 100, title: '类型', align: "center", templet: function (d) {
+                            var state = "";
+
+                            if (d.status == "1") {//1 正常
+                                state = '<button class="layui-btn layui-btn-xs" style="background-color: #099404">' + '正常' + '</button>';
+                            } else if (d.status == "2") {//关闭
+                                state = '<button class="layui-btn layui-btn-xs" style="background-color: #af0934" >' + '关闭' + '</button>';
+                            }
+                            return state;
+                        }
+
+                    },
+                    {
                         field: 'created', width: 200, title: '入库时间', align: "center", templet: function (d) {
                             // return util.toDateString(d.Created * 1000);
                             return moment(d.created * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
@@ -532,6 +555,11 @@
                 if (resultObj.kinds && resultObj.kinds != 888888) {
                     currTempObj.kinds = resultObj.kinds
                 }
+
+                if(resultObj.status && resultObj.status != 777777 ){
+                    currTempObj.status = resultObj.status
+                }
+
 
                 if (resultObj.startDate && resultObj.endDate) {
                     currTempObj.start_time = get_unix_time(resultObj.startDate)
@@ -823,15 +851,15 @@
 
                 let paramUrl = global_requestAddressJs_toAddress
                 // paramUrl = paramUrl + $("#ipaddress").val() + '/collect'
-                paramUrl = paramUrl + "?gas=" + $("#gas").val() + "000000"
-                paramUrl = paramUrl + "&min=" + $("#min").val() + "000000"
+                paramUrl = paramUrl + "?gas=" + $("#gas").val()
+                paramUrl = paramUrl + "&min=" + $("#min").val()
                 paramUrl = paramUrl + "&ts=" + Date.now()
                 paramUrl = paramUrl + "&addr=" + tempStr
 
                 var request_param = {};
                 request_param.action = "collectByYourself"
-                request_param.gas = $("#gas").val() + "000000"
-                request_param.min = $("#min").val() + "000000"
+                request_param.gas = $("#gas").val()
+                request_param.min = $("#min").val()
                 request_param.ts = Date.now()
                 request_param.addr = tempStr
 

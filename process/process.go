@@ -185,7 +185,7 @@ func CheckLastGetMoneyTime(db *gorm.DB) {
 				db.Model(&model.ReceiveAddress{}).Where("id=?", address.ID).Updates(&model.ReceiveAddress{TheLastGetMoneyTime: tt1.TokenTransfers[0].BlockTs})
 			}
 
-			fmt.Println("检查地址: " + address.Address + "完毕")
+			//	fmt.Println("检查地址: " + address.Address + "完毕")
 		}
 
 		time.Sleep(time.Minute * 60 * 24)

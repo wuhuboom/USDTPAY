@@ -38,6 +38,11 @@ func ToAddress(c *gin.Context) {
 			Db = Db.Where("kinds=?", add)
 		}
 
+		//1正常 2 关闭 状态
+		if add, isE := c.GetPostForm("status"); isE == true {
+			Db = Db.Where("status=?", add)
+		}
+
 		if add, isE := c.GetPostForm("money"); isE == true {
 			Db = Db.Where("money >=?", add)
 		}
@@ -151,8 +156,8 @@ func ToAddress(c *gin.Context) {
 	//资金归集
 	if action == "collectByYourself" {
 		req := make(map[string]interface{})
-		req["gas"], _ = strconv.ParseInt(c.PostForm("gas"), 10, 64)
-		req["min"], _ = strconv.ParseInt(c.PostForm("min"), 10, 64)
+		req["gas"], _ = strconv.ParseInt(c.PostForm("gas")+"000000", 10, 64)
+		req["min"], _ = strconv.ParseInt(c.PostForm("min")+"000000", 10, 64)
 		if req["gas"] == "" || req["min"] == "" {
 			tools.ReturnError101(c, "非法参数")
 			return
@@ -175,6 +180,21 @@ func ToAddress(c *gin.Context) {
 		log := model.Log{Kinds: 4, Ips: c.ClientIP(), Content: "资金归集成功"}
 		log.CreatedLogs(mysql.DB)
 		tools.ReturnError200(c, "归集成功")
+		return
+	}
+	//获取总余额  更新总余额
+	if action == "getAllMoney" {
+		rec := make([]model.ReceiveAddress, 0)
+		err := mysql.DB.Find(&rec).Error
+		if err != nil {
+			tools.ReturnError101(c, "获取失败")
+			return
+		}
+		var sumMoney float64
+		for _, v := range rec {
+			sumMoney = sumMoney + v.Money
+		}
+		tools.ReturnError200Data(c, sumMoney, "获取成功")
 		return
 	}
 
