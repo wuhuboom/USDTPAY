@@ -125,10 +125,10 @@
 <script type="text/javascript">
     document.write('<script src="./assets/js/config.url.js?ttv='+new Date().getTime()+'" type="text/javascript" ><\/script>');
 </script>
-
+<!--{{console.log("模板item",item)}}-->
 <script id="sideNav" type="text/html">
     {{#  layui.each(d, function(index, item){ }}
-<!--    {{console.log("模板item",item)}}-->
+
     <li class="layui-nav-item">
         <a lay-href="{{item.url}}" data-id="{{item.id_item}}"><i class="{{item.icon}}"></i>&emsp;<cite>{{ item.name }}</cite></a>
         {{# if(item.subMenus&&item.subMenus.length>0){ getSubMenus(item.subMenus); } }}
@@ -211,9 +211,18 @@ var menuListArr;
                     return false;
                 }
 
+
                 menuListArr = dataArray.result
 
-                console.log("menuListArr",menuListArr)
+                if(menuListArr){
+                    localStorage.setItem('menuList',JSON.stringify(menuListArr))
+                }else{
+                    localStorage.setItem('menuList',[])
+                }
+
+
+
+                // console.log("menuListArr",menuListArr)
                 //方式1 ------ 头
                 let menuArray = []
                 menuListArr.forEach((item)=>{
@@ -221,7 +230,7 @@ var menuListArr;
                         let secondArr = []
                         let itemIsCheck = 0
                         item.secondary_menu.forEach((itemS)=>{
-                            console.log("itemS子菜单",itemS)
+                            // console.log("itemS子菜单",itemS)
                             // if(itemS.Add === 0 && itemS.Delete === 0 && itemS.Read === 0 && itemS.Update === 0){
                             //     itemIsCheck = itemIsCheck + 1
                             // }else{
@@ -230,7 +239,7 @@ var menuListArr;
 
                             itemS.href = 'page'+itemS.path+".html"
                             itemS.name = itemS.name
-                            itemS.url = 'page/'+itemS.path+".html"
+                            itemS.url = 'page'+itemS.path+".html"
                             itemS.ID = itemS.id
                             secondArr.push({
                                 "href":'page'+itemS.path+".html",
@@ -306,7 +315,7 @@ var menuListArr;
 
                 })
                 // console.log("menuListArr",menuListArr)
-                console.log("menuArray",menuArray)
+                // console.log("menuArray",menuArray)
                 laytpl(sideNav.innerHTML).render(menuArray, function (html) {
                     $('[lay-filter=admin-side-nav]').html(html);
                     element.render('nav', 'admin-side-nav');  // 这里非常重要

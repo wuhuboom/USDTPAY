@@ -7,15 +7,26 @@ global_requestAddressJs_login = global_requestAddress+ "/v2/login";
 //获取菜单
 global_requestAddressJs_getMenus = global_requestAddress+ "/v2/getMenus";
 
-//获取订单/回调/修改备注
+//获取充值订单/回调/修改备注
 global_requestAddressJs_topUpOrder = global_requestAddress+ "/order/topUpOrder";
 
 //获取地址管理/更新所有余额/单个余额/资金归集
 global_requestAddressJs_toAddress = global_requestAddress+ "/address/toAddress";
 
+// 回调日志
+global_requestAddressJs_backLog = global_requestAddress+ "/log/backLog";
 
+// 系统日志
+global_requestAddressJs_systemLog = global_requestAddress+ "/log/systemLog";
 
+// 获取系统参数
+global_requestAddressJs_parameterSetting = global_requestAddress+ "/system/parameterSetting";
 
+// 获取用户管理/添加用户
+global_requestAddressJs_userManagement= global_requestAddress+ "/system/userManagement";
+
+// 获取角色/添加角色/删除角色/修改权限/查看权限
+global_requestAddressJs_roleManagement= global_requestAddress+ "/system/roleManagement";
 
 
 

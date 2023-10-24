@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>用户列表</title>
+    <link rel="stylesheet" href="../../assets/libs/layui/css/layui.css"/>
+    <script type="text/javascript">
+        document.write("<link rel='stylesheet' href='../../assets/module/admin.css?ttv="+Math.random()+"'>");
+    </script>
+    <script type="text/javascript">
+        document.write('<script src="../../assets/js/moment.js?ttv='+new Date().getTime()+'" type="text/javascript" ><\/script>');
+        document.write('<script src="../../assets/js/common.js?ttv='+new Date().getTime()+'" type="text/javascript" ><\/script>');
+        document.write('<script src="../../assets/js/config.url.js?timestamp='+new Date().getTime()+'" type="text/javascript" charset="utf-8"><\/script>');
+    </script>
+    <style>
+
+        .currSerachBtn {
+            box-shadow: 0 15px 18px -6px rgb(45 140 240 / 65%) !important;
+        }
+
+        .currReloadBtn {
+            box-shadow: 0 15px 18px -6px rgb(146 109 222 / 65%) !important;
+        }
+
+        .layui-table-cell {
+            height: 46px;
+            line-height: 46px;
+
+            /*height: auto ;*/
+            /*white-space: normal;*/
+            /*word-wrap:break-word;*/
+        }
+
+
+    </style>
+
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!-- 表格工具栏 -->
+            <form class="layui-form toolbar" style="margin-top: 10px;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="width: 150px;">池大小</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="max_pond" class="layui-input " placeholder="请在此输入池大小" />
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="margin-top: 10px;">
+                    <label class="layui-form-label" style="width: 150px;">池地址过期时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="expiration" class="layui-input " placeholder="请在此输入池地址过期时间" />
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item" style="margin-top: 10px;">
+                    <label class="layui-form-label" style="width: 150px;">池金额分界点</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="pond_amount" class="layui-input " placeholder="请在此输入池金额分界点" />
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="margin-top: 10px;">
+                    <label class="layui-form-label" style="width: 150px">管理员谷歌验证
+                    </label>
+                    <div class="layui-input-block">
+                        <input type="checkbox"  name="AdminGoogleStatus_switch" lay-skin="switch"lay-filter="AdminGoogleStatus_switch" id="AdminGoogleStatus_switch" lay-text="需要|不需要" >
+                    </div>
+                </div>
+
+            </form>
+            <div class="layui-form-item" style="margin-top: 10px;margin-left: 70px">
+                <div class="layui-input-block">
+                    <button class="layui-btn"  lay-submit="" lay-filter="confirmBtn" id="confirmBtn" >立即提交</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- js部分 -->
+<script type="text/javascript" src="../../assets/libs/layui/layui.js"></script>
+<!--<script type="text/javascript" src="../../assets/js/common.js?v=318"></script>-->
+<script type="text/javascript">
+    document.write('<script src="../../assets/js/common.js?ttv='+new Date().getTime()+'" type="text/javascript" ><\/script>');
+</script>
+
+<script type="text/javascript" src="../../assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../assets/js/jquery.cookie.min.js"></script>
+<!--<script type="text/javascript" src="../../assets/js/config.url.js"></script>-->
+<script type="text/javascript">
+    document.write('<script src="../../assets/js/config.url.js?timestamp='+new Date().getTime()+'" type="text/javascript" charset="utf-8"><\/script>');
+</script>
+
+
+
+<!--数据表格操作工具栏-->
+<script type="text/html" id="orderListBar">
+    {{# if (d.three_back == "1") { }}
+<!--    <a class="layui-btn layui-btn-sm " lay-event="rechargebtn"><i class="layui-icon">&#xe605;</i>回调</a>-->
+    {{#} }}
+    <!--    <a class="layui-btn layui-btn-xs " lay-event="changebtn"><i class="layui-icon">&#xe605;</i>修改</a>-->
+    <!--    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delbtn"><i class="layui-icon">&#x1006;</i>删除</a>-->
+</script>
+
+
+
+<script>
+
+    var mybck = $.cookie('tokenMybUP');
+    //alert(document.cookie);
+    // console.log(mybck)
+    if (mybck == "" || mybck == null) {
+
+        window.top.location.href = "../../login.html";
+
+    } else {
+        var currConfigID = 0
+        var jsondata;
+        var bankListArr = []
+
+        var currDateVal
+        var currDateVal_end
+        layui.use(['layer', 'form', 'table', 'util', 'admin', 'xmSelect', 'notice', 'treeTable', 'laydate','element'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var table = layui.table;
+            var util = layui.util;
+            var admin = layui.admin;
+            var xmSelect = layui.xmSelect;
+            var notice = layui.notice;
+            var treeTable = layui.treeTable
+            var laydate = layui.laydate;
+            var element = layui.element;  //tab需要引入到
+
+
+
+
+            let reqParam = {}
+            reqParam.action = "check"
+            // 获取配置
+            $.ajax({
+                url: global_requestAddressJs_parameterSetting,
+                headers: {
+                    token:mybck
+                },
+                data:reqParam,
+                type: 'post',
+                dataType: 'json',
+                success: function (resultData) {
+                    if(resultData.code === 200){
+                        currConfigID = resultData.result.id
+                        $("#max_pond").val(resultData.result.maxPond);
+                        $("#expiration").val(resultData.result.expiration);
+                        $("#pond_amount").val(resultData.result.pondAmount);
+
+                        // 1关闭  2开启
+                        if(resultData.result.googleSwitch == 1){
+
+                            $("#AdminGoogleStatus_switch").attr("value", '1');
+                            $("#AdminGoogleStatus_switch").removeAttr('checked')
+
+                        }else {
+
+                            $("#AdminGoogleStatus_switch").attr("value", '2');
+                            $('#AdminGoogleStatus_switch').attr('checked', 'checked'); //改变开关为 开
+                        }
+
+                        //重要,switch attr 之后需要重新渲染checkbox，否则没有效果
+                        form.render('checkbox');
+
+                    }else{
+
+                    }
+                }
+            })
+
+            //监听谷歌验证开关
+            form.on('switch(AdminGoogleStatus_switch)', function(data){
+
+
+                if(data.elem.checked){
+                    $("#AdminGoogleStatus_switch").attr("value", '2');
+                    // console.log(data.value);
+                }else{
+                    $("#AdminGoogleStatus_switch").attr("value", '1');
+                }
+
+
+                var param={};
+                // param.id = currConfigID
+                param.action = "update"
+                param['googleSwitch'] = $("#AdminGoogleStatus_switch").val();
+
+                layer.alert('没接口')
+
+                // //获取期数添加到下拉框中
+                // $.ajax({
+                //     url: global_requestAddressJs_parameterSetting,
+                //     dataType: 'json',
+                //     headers:{
+                //         token:mybck
+                //     },
+                //     type: 'post',
+                //     data: param,
+                //     success: function (resultData) {
+                //
+                //         if(resultData.code == 200){
+                //             notice.msg(resultData.msg, {icon: 1});
+                //             // window.location.reload();
+                //         }else{
+                //             notice.msg(resultData.msg, {icon: 2});
+                //         }
+                //     }
+                // })
+
+            })
+
+
+            //总配置提交按钮
+            $("#confirmBtn").click(function(){
+                var param={};
+                param['action'] = "update"
+                param['max_pond'] = $("#max_pond").val();
+                param['expiration'] = $("#expiration").val();
+                param['pond_amount'] = $("#pond_amount").val();
+                $.ajax({
+                    url: global_requestAddressJs_parameterSetting,
+                    headers: {
+                        token:mybck
+                    },
+                    type: 'post',
+                    data: param,
+                    dataType: 'json',
+                    success: function (resultData) {
+                        if(resultData.code === 200){
+
+                            notice.msg(resultData.msg, {icon: 1});
+
+                        }else{
+                            notice.msg(resultData.msg, {icon: 2});
+                        }
+                    }
+                })
+                return false;
+            });
+        });
+
+    }
+
+
+</script>
+</body>
+</html>

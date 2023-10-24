@@ -51,73 +51,43 @@
             <!-- 表格工具栏 -->
             <form class="layui-form toolbar">
                 <div class="layui-form-item" style="margin-left: -40px">
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 100px">用户名</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="username" id="username" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 100px">平台订单号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="platform_order" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 100px">三方平台订单号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="three_order" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 100px">收账地址</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="recharge_address" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
 
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 100px">订单状态</label>
-                        <div class="layui-input-inline">
-                            <select name="status" id="status" lay-filter="Status">
-                                <option value="888888">全部</option>
-                                <option value="1">未支付</option>
-                                <option value="2">已支付</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 100px">是否回调</label>
-                        <div class="layui-input-inline">
-                            <select name="three_back" id="three_back" lay-filter="ThreeBack">
-                                <option value="888888">全部</option>
-                                <option value="1">未回调</option>
-                                <option value="2">已回调</option>
-                                <option value="3">不自动回调</option>
-                                <option value="4">手动回调</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 100px">开始时间</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="start_time" name="start_time" autocomplete="off"
-                                   class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 100px">结束时间</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="end_time" name="end_time" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
+<!--                    <div class="layui-inline">-->
+<!--                        <label class="layui-form-label" style="width: 100px">类型</label>-->
+<!--                        <div class="layui-input-inline">-->
+<!--                            <select name="kinds" id="kinds" lay-filter="kinds">-->
+<!--                                <option value="888888">全部</option>-->
+<!--                                <option value="1">登录日志</option>-->
+<!--                                <option value="2">系统错误日志</option>-->
+<!--                                <option value="3">获取地址日志</option>-->
+<!--                                <option value="4">资金归集日志</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="layui-inline">-->
+<!--                        <label class="layui-form-label" style="width: 100px">开始时间</label>-->
+<!--                        <div class="layui-input-inline">-->
+<!--                            <input type="text" id="start_time" name="start_time" autocomplete="off"-->
+<!--                                   class="layui-input">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="layui-inline">-->
+<!--                        <label class="layui-form-label" style="width: 100px">结束时间</label>-->
+<!--                        <div class="layui-input-inline">-->
+<!--                            <input type="text" id="end_time" name="end_time" autocomplete="off" class="layui-input">-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="layui-inline" style="margin-left: 20px">&emsp;
-                        <button class="layui-btn icon-btn currSerachBtn" lay-filter="userTbSearch" lay-submit>
-                            <i class="layui-icon">&#xe615;</i>搜索
-                        </button>
+<!--                        <button class="layui-btn icon-btn currSerachBtn" lay-filter="userTbSearch" lay-submit>-->
+<!--                            <i class="layui-icon">&#xe615;</i>搜索-->
+<!--                        </button>-->
                         <button class="layui-btn icon-btn currReloadBtn" lay-filter="reloadData" lay-submit
                                 style="background-color: #926dde;border-color: #926dde;">
                             <i class="layui-icon layui-icon-refresh"></i>刷新数据
+                        </button>
+
+                        <button class="layui-btn icon-btn currReloadBtn" lay-filter="addRole" id="addRole" lay-submit style="background-color: #926dde;border-color: #926dde;">
+                            <i class="layui-icon layui-icon-add-1"></i>添加角色
                         </button>
                     </div>
                 </div>
@@ -148,40 +118,19 @@
 
 <!--数据表格操作工具栏-->
 <script type="text/html" id="orderListBar">
-    {{# if (d.three_back == "1") { }}
-    <a class="layui-btn layui-btn-sm " lay-event="rechargebtn"><i class="layui-icon">&#xe605;</i>回调</a>
-    {{#} }}
-    <!--    <a class="layui-btn layui-btn-xs " lay-event="changebtn"><i class="layui-icon">&#xe605;</i>修改</a>-->
-    <!--    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delbtn"><i class="layui-icon">&#x1006;</i>删除</a>-->
+    <a class="layui-btn layui-btn-sm layui-btn-radius   " lay-event="changebtn" style="background-color: #009688"><i class="layui-icon layui-icon-edit"></i>权限设置</a>
+<!--    <a class="layui-btn layui-btn-sm layui-btn-radius " lay-event="resetgoogle" style="background-color: #ffba00;color: #fff;border: 1px solid #ffba00;">重置google</a>-->
+    <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger" lay-event="delbtn"><i class="layui-icon">&#x1006;</i>删除</a>
 </script>
 
-<script type="text/html" id="currentThreeBack">
-    {{# if(d.three_back == "1"){ }}
-    <button class="layui-btn layui-btn-xs" style="background-color: #FF5722">未回调</button>
-    {{# } else if (d.three_back == "2") { }}
-    <button class="layui-btn layui-btn-xs">已回调</button>
-    {{# } else if (d.three_back == "3") { }}
-    <button class="layui-btn layui-btn-xs" style="background-color: #282626" lay-event="changeBackUrl"> 不自动回调
-    </button>
-    {{# } else if (d.three_back == "4") { }}
-    <button class="layui-btn layui-btn-xs" style="background-color: #169292"> 手动回调</button>
-    {{#} }}
 
-</script>
-<script type="text/html" id="toolbarDemo">
-    <div id="showContent" style="display: none">
-        <blockquote class="layui-elem-quote" style="display: flex;">
-            <div style="color: darkblue">充值金额 (订单金额):<span id="AccountOrders">0</span></div>
-            <div style="margin-left:10px;color: darkblue">充值金额(实际返回金额):<span id="AccountPractical">0</span></div>
-        </blockquote>
-    </div>
-</script>
 
 <script>
 
     var mybck = $.cookie('tokenMybUP');
     //alert(document.cookie);
     // console.log(mybck)
+    var menu_list
     if (mybck == "" || mybck == null) {
 
         window.top.location.href = "../../login.html";
@@ -193,7 +142,7 @@
 
         var currDateVal
         var currDateVal_end
-        var local_storage_key = 'admin_usdtpay_opUpOrder_t_list';
+        var local_storage_key = 'admin_usdtpay_roleManagement_t_list';
         layui.use(['layer', 'form', 'table', 'util', 'admin', 'xmSelect', 'notice', 'treeTable', 'laydate'], function () {
             var $ = layui.jquery;
             var layer = layui.layer;
@@ -205,6 +154,36 @@
             var notice = layui.notice;
             var treeTable = layui.treeTable
             var laydate = layui.laydate;
+
+            let menuListStr =  localStorage.getItem('menuList')
+            let menuListArr = JSON.parse(menuListStr)
+            console.log("menuListArr",menuListArr)
+            menu_list = menuListArr
+
+            // //获取菜单列表
+            // var param = {};
+            // menu_list = []
+            // $.ajax({
+            //     url: global_requestAddressJs_getMenus,
+            //     headers: {
+            //         "token": mybck
+            //     },
+            //     type: 'get',
+            //     dataType: 'json',
+            //     success: function (res) {
+            //         if (res.code === 200) {
+            //             var returnDataArray = res.result
+            //             // console.log("returnDataArray",returnDataArray)
+            //             menu_list = returnDataArray
+            //         }
+            //     }
+            // })
+
+
+
+
+
+
 
             //开始日期组件常规用法
             laydate.render({
@@ -257,18 +236,18 @@
             var tableCols = tableSetCol(getTableCols(), local_storage_key);
             var insTb = table.render({
                 elem: '#userTable',
-                url:  global_requestAddressJs_topUpOrder ,
+                url:  global_requestAddressJs_roleManagement ,
                 method: 'post',
                 headers: {
                     token: mybck
                 },
+                where: request_param,
                 // response: {
                 //     statusCode: 200,
                 //     dataName: 'result',
                 // },
-                toolbar: true,
-                defaultToolbar: ['filter'],
-                where: request_param,
+                // toolbar: true,
+                // defaultToolbar: ['filter'],
                 // toolbar: ['<p>',
                 //     '<button lay-event="add" class="layui-btn layui-btn-sm icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>&nbsp;',
                 //     '<button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
@@ -282,7 +261,7 @@
                     , last: "尾页"//不显示尾页
                 },
                 height: "full-150",
-                limit: 500,
+                limit: 20,
                 limits: [20, 30, 50, 100, 500, 2000],
                 // id : "systemLog",
                 cols: tableCols,
@@ -293,21 +272,6 @@
 
                     //重新渲染 固定写法
                     form.render("select");
-
-                    if (!$("#start_time").val() && !$("#end_time").val()) {
-                        // console.log("进来")
-                        $("#showContent").hide()
-                    } else {
-                        $("div").css({"display": ""});
-                        $("#showContent").show()
-                    }
-
-                    // console.log("res.account_orders",res.accountOrders)
-                    // console.log("res.account_practical",res.accountPractical)
-
-                    $("#AccountOrders").text(res.accountOrders)
-                    $("#AccountPractical").text(res.accountPractical)
-
 
                     // $(".layui-table-main tr").each(function (index, val) {
                     //     $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
@@ -344,60 +308,30 @@
             //表格 头部数据函数封装
             function getTableCols() {
                 var col = [[
-                    // {type: "checkbox", width: 50},
-                    {field: 'id', width: 80, title: 'ID', align: "center", sort: true},
-                    {field: 'platform_order', width: 300, title: '平台订单号', align: "center"},
-                    {field: 'three_order', width: 300, title: '三方平台订单号', sort: true, align: "center"},
-                    {field: 'account_orders', width: 100, title: '订单充值金额', align: "center"},
-                    {field: 'collection_address', title: '转账地址(玩家地址)', minWidth: 300, align: "center"},
-                    {field: 'remark', title: '备注', edit: 'text', sort: true, align: "center"},
-                    {field: 'recharge_address', width: 300, title: '收账地址', sort: true, align: "center"},
-                    {field: 'recharge_type', width: 100, title: '充值类型', sort: true, align: "center"},
-                    {field: 'username', width: 100, title: '用户ID', align: "center"},
-                    {field: 'account_practical', width: 120, title: '实际回调金额', align: "center"},
-                    {
-                        field: 'status', width: 100, title: '订单状态', align: "center", templet: function (d) {
+                    // {type: 'checkbox'},
+                    // {field: 'id',title:'id',sort: true,align:"center",width:70},
+                    {field: 'id',title:'id',sort: true,align:"center",width:70},
+                    {field: 'name', title: '角色名称', sort: true,align:"center"},
+                    {field: 'status', title: '状态', sort: true,align:"center",templet:function(d){
                             var state = "";
-
-                            if (d.status == "1") {//未支付
-                                state = '<button class="layui-btn layui-btn-xs" style="background-color: #FF5722">' + '未支付' + '</button>';
-                            } else if (d.status == "2") {//已支付
-                                state = '<button class="layui-btn layui-btn-xs" >' + '已支付' + '</button>';
-                            } else {
-                                state = '<button class="layui-btn layui-btn-xs"  style="background-color: #282626" >' + '已失效' + '</button>';
+                            if(d.status == "2"){//正常,checked 打开
+                                state = "<input type='checkbox' value='" + d.status + "' id='no_talk' lay-filter='no_talk'  name='no_talk'  lay-skin='switch' lay-text='正常|禁用' checked>";
+                                return state;
+                            }else if(d.status == "1"){//禁用
+                                state = "<input type='checkbox' value='" + d.status + "' id='no_talk' lay-filter='no_talk'  name='no_talk'  lay-skin='switch' lay-text='正常|禁用'>";
+                                return state;
+                            }else{
+                                return ''
                             }
-                            return state;
-                        }
 
-                    },
-                    {
-                        field: 'three_back', width: 100, title: '是否回调', align: "center", toolbar: '#currentThreeBack'
+                        }},
 
-                    },
-                    {
-                        field: 'successfully',
-                        width: 200,
-                        title: '区块时间',
-                        sort: true,
-                        align: "center",
-                        templet: function (d) {
-                            // console.log("111",moment(1697963312 * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss'))
-                            return moment(d.successfully * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
-                        },
-                        sort: true
-                    },
-                    {
-                        field: 'created', width: 200, title: '入库时间', align: "center", templet: function (d) {
-                            // return util.toDateString(d.Created* 1000);
-                            return moment(d.created * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
-                        }, sort: true
-                    },
-                    // {
-                    //     field: 'updated_at', title: '更新时间',align:"center", templet: function (d) {
-                    //         return util.toDateString(d.updated_at* 1000);
-                    //     }, sort: true
-                    // },
-                    {title: '操作', width:100, templet:'#orderListBar',fixed:"right",align:"center"}
+                    {field: 'Created', title: '创建时间',width:170, sort: true,align:"center",templet: function(d){
+                            return moment(d.Created * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
+                            // return util.toDateString(d.Created * 1000);
+                        }},
+
+                    {title: '操作', width:290, templet:'#orderListBar',fixed:"right",align:"center"}
                 ]]
                 return col;
             }
@@ -468,28 +402,10 @@
                 let resultObj = data.field
                 // console.log("result",resultObj)
 
-                if (resultObj.platform_order) {
-                    currTempObj.platform_order = resultObj.platform_order
-                }
 
-                if (resultObj.three_order) {
-                    currTempObj.three_order = resultObj.three_order
-                }
 
-                if (resultObj.recharge_address) {
-                    currTempObj.recharge_address = resultObj.recharge_address
-                }
-
-                if (resultObj.username) {
-                    currTempObj.username = resultObj.username
-                }
-
-                if (resultObj.status !== '888888') {
-                    currTempObj.status = resultObj.status
-                }
-
-                if (resultObj.three_back !== '888888') {
-                    currTempObj.three_back = resultObj.three_back
+                if (resultObj.kinds !== '888888') {
+                    currTempObj.kinds = resultObj.kinds
                 }
 
 
@@ -641,12 +557,11 @@
 
 
             //监听开启开关按钮操作
-            form.on('switch(table_status)', function (obj) {
-
+            form.on('switch(no_talk)', function(obj){
                 // console.log("obj",obj)
 
                 // 获取当前控件
-                var selectIfKey = obj.othis;
+                var selectIfKey=obj.othis;
                 // 获取当前所在行
                 var parentTr = selectIfKey.parents("tr");
                 // 获取当前所在行的索引
@@ -654,18 +569,19 @@
 
                 //通过相对位置找对应行数据
                 // 获取当前行第一和三列的值
-                var currentwx_id = parentTr.find(('td:eq(0)')).text().trim();
+                var currentwx_id = parentTr.find(('td:eq(1)')).text().trim();
+                console.log("currentwx_id",currentwx_id)
 
 
                 var currStatusBool = obj.elem.checked;
                 // console.log("currStatusBool",currStatusBool)
                 var messageTitle = '';
                 var currStatusNum = 0;
-                if (currStatusBool) {  //currStatusBool true
-                    messageTitle = '系统将对该数据进行开启操作,确定对当前用户进行开启操作吗?'
-                } else { //false
+                if(currStatusBool){  //currStatusBool true
+                    messageTitle = '系统将对该用户进行解禁操作,确定对当前用户进行解禁操作吗?'
+                }else{ //false
 
-                    messageTitle = '系统将对该数据进行关闭操作,确定对当前用户进行关闭操作吗?'
+                    messageTitle = '系统将对该用户进行禁用操作,确定对当前用户进行禁用操作吗?'
 
                 }
 
@@ -679,41 +595,42 @@
                     shade: 0.3,
                     skin: 'layui-layer-rim',//加上边框
                     title: "温馨提示",
-                    content: messageTitle,
+                    content:messageTitle,
                     // content: `<div>`+messageTitle+`</div>`,
-                    btn: ['确定', '取消'],
+                    btn: ['确定','取消'],
                     // // 弹层外区域关闭
                     shadeClose: true,
-                    btn1: function (index, layero) {//确定事件
+                    btn1: function(index, layero) {//确定事件
                         //点击第一个按钮处理逻辑
                         // layer.msg("1");
-                        if (currStatusBool) {
-                            currStatusNum = 1
-                        } else {
+                        if(currStatusBool){
                             currStatusNum = 2
+                        }else{
+                            currStatusNum = 1
                         }
 
                         //进行ajax请求
-                        var param = {};
+                        var param={};
                         param.status = currStatusNum
+                        //这个就是当前那条数据的ID
                         param.id = currentwx_id
 
                         $.ajax({
-                            url: global_requestAddress + aaaaaaaaaaaaa + "?action=update",
-                            method: 'POST',
-                            data: param,
-                            dataType: "json",
-                            headers: {
-                                token: mybck,
+                            url: global_requestAddress+ global_requestAddress_js_role+"?action=update",
+                            method:'POST',
+                            data:param,
+                            dataType:"json",
+                            headers:{
+                                token:mybck,
                             },
-                            success: function (res) {
-                                if (res.code === 200) {  //
+                            success:function (res) {
+                                if(res.code === 2000){  //
                                     notice.msg(res.msg, {icon: 1});
                                     //列表的刷新
                                     insTb.reload();
                                     //关闭第一个弹窗的组件ID
                                     layer.close(index);
-                                } else {
+                                }else{
                                     notice.msg(res.msg, {icon: 2});
                                     insTb.reload();
                                     layer.close(index);
@@ -721,9 +638,8 @@
                             }
                         })
 
-
                     },
-                    btn2: function (index, layero) {//取消事件
+                    btn2: function(index, layero){//取消事件
                         //点击第二个按钮处理逻辑
                         // layer.msg("2");
 
@@ -740,7 +656,7 @@
                         form.render();
                         layer.close(index);
                     },
-                    cancel: function (index, layero) {//取消事件
+                    cancel: function(index, layero){//取消事件
                         //点击第二个按钮处理逻辑
                         // layer.msg("2");
                         notice.msg("取消操作", {icon: 5});
@@ -752,7 +668,9 @@
                 })
 
 
+
             });
+
 
             /* 表格工具条点击事件 */
             table.on('tool(userTable)', function (obj) {
@@ -760,83 +678,35 @@
 
 
                 var currDatas = obj.data;
-                if (obj.event === 'callbacksuccess') { // 修改
+                if (obj.event === 'changebtn') { // 修改
                     // showEditModel(obj.data);
-
-                    layer.confirm('确定要回调成功当前数据吗？', {
-                        skin: 'layui-layer-admin',
-                        shade: .1
-                    }, function (i) {
-                        layer.close(i);
-                        var loadIndex = layer.load(2);
-
-                        var param = {};
-                        param['id'] = currDatas.ID;
-
-                        $.ajax({
-                            url: global_requestAddress + global_requestAddress_js_collectionOperation + "?action=callback",
-                            data: param,
-                            headers: {
-                                token: mybck
-                            },
-                            type: "POST",
-                            dataType: "json",
-                            success: function (addResult) {
-                                layer.close(loadIndex);
-                                if (addResult.code === 200) {
-                                    notice.msg(addResult.msg, {icon: 1});
-                                    insTb.reload({page: {curr: 1}});
-                                } else {
-                                    notice.msg(addResult.msg, {icon: 2});
-                                }
-
-                            },
+                    let formDatas_sub = {
+                        currDatas,
+                        menu_list
+                    }
 
 
-                        });
-
-                    });
-
-
-                } else if (obj.event === 'detailBtn') {
-
-                    jsondata = JSON.stringify(currDatas)
+                    jsondata = JSON.stringify(formDatas_sub)
                     var index = layui.layer.open({
-                        area: ['1200px', '500px'],
+                        area: ['600px', '500px'],
                         fixed: false, //不固定
                         maxmin: false,
-                        title: "订单详情",
-                        skin: 'layui-layer-rim',//加上边框
-                        type: 2,
-                        content: "pay_order_detail.html",
-                        success: function (layero, index) {
-                            var body = layui.layer.getChildFrame('body', index);
-                            if (currDatas) {
-
-                            }
-                        },
-                        end: function () {//弹窗关闭后的回调函数
-                            //利用laypage实现局部刷新,以下两种方式都可以
-                            // $(".layui-laypage-btn").click()
-                            //直接刷新当前修改的行
-                            $(".layui-laypage-btn")[0].click()
-
-                        }
-                    })
-
-
-                } else if (obj.event === 'rechargebtn') { // 回调
-                    jsondata = JSON.stringify(currDatas)
-                    var index = layui.layer.open({
-                        area: ['500px', '300px'],
-                        fixed: false, //不固定
-                        maxmin: false,
-                        title : "充值回调",
+                        title : "编辑改角色权限",
                         skin: 'layui-layer-rim',//加上边框
                         type : 2,
-                        content : "callback.html",
+                        content : "role_set.html",
                         success : function(layero, index){
                             var body = layui.layer.getChildFrame('body', index);
+
+
+
+                            if(currDatas) {
+
+                                //不显示出来的回显数据
+                                body.find("#role_name").val(currDatas.RoleName);
+
+                            }
+
 
                         },
                         end : function() {//弹窗关闭后的回调函数
@@ -845,22 +715,30 @@
                             //直接刷新当前修改的行
                             $(".layui-laypage-btn")[0].click()
 
+
                         }
                     })
+                    window.sessionStorage.setItem("index",index);
+                    //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+                    $(window).on("resize",function(){
+                        layui.layer.full(window.sessionStorage.getItem("index"));
+                    })
 
-                } else if (obj.event === 'redo') {
+                }else if (obj.event === 'delbtn') { // 删除角色
+                    // jsondata = JSON.stringify(currDatas)
 
-                    var messageTitle = '系统将对该数据进行冲正操作,确定对当前数据进行冲正吗?';
+
+                    //弹窗组件
                     layer.open({
                         // type: 2,
-                        area: ['450px', '195px'],
+                        area: ['450px', '200'],
                         fix: false,
                         //不固定
                         maxmin: true,
                         shade: 0.3,
                         skin: 'layui-layer-rim',//加上边框
-                        title: "温馨提示",
-                        content:messageTitle,
+                        title: "重置提醒",
+                        content:"你确定要删除该角色吗？",
                         // content: `<div>`+messageTitle+`</div>`,
                         btn: ['确定','取消'],
                         // // 弹层外区域关闭
@@ -868,13 +746,14 @@
                         btn1: function(index, layero) {//确定事件
                             //点击第一个按钮处理逻辑
                             // layer.msg("1");
+
                             //进行ajax请求
                             var param={};
-                            //这个就是当前那条数据的ID
-                            param.id =currDatas.ID
+                            param.role_id = currDatas.id
+                            param.action = "delete"
 
                             $.ajax({
-                                url:global_requestAddress+global_requestAddress_js_collectionOperation+"?action=striking",
+                                url:global_requestAddressJs_roleManagement,
                                 method:'POST',
                                 data:param,
                                 dataType:"json",
@@ -895,11 +774,14 @@
                                     }
                                 }
                             })
+
+
+
+
                         },
                         btn2: function(index, layero){//取消事件
                             //点击第二个按钮处理逻辑
                             // layer.msg("2");
-
                             notice.msg("取消操作", {icon: 5});
                             form.render();
                             layer.close(index);
@@ -914,10 +796,48 @@
                     })
 
 
+
+
+
                 }
 
 
             });
+
+
+            $("#addRole").click(function () {
+
+                var index = layui.layer.open({
+                    area: ['500px', '200px'],
+                    fixed: false, //不固定
+                    maxmin: false,
+                    title : "添加",
+                    skin: 'layui-layer-rim',//加上边框
+                    type : 2,
+                    content : "role_add.html",
+                    success : function(layero, index){
+                        var body = layui.layer.getChildFrame('body', index);
+
+
+                    },
+                    end : function() {//弹窗关闭后的回调函数
+                        //利用laypage实现局部刷新,以下两种方式都可以
+                        // $(".layui-laypage-btn").click()
+                        //直接刷新当前修改的行
+                        $(".layui-laypage-btn")[0].click()
+
+                    }
+                })
+                window.sessionStorage.setItem("index",index);
+                //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+                $(window).on("resize",function(){
+                    layui.layer.full(window.sessionStorage.getItem("index"));
+                })
+
+                return false
+            })
+
+
 
 
         });

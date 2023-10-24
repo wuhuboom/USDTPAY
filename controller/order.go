@@ -102,6 +102,7 @@ func TopUpOrder(c *gin.Context) {
 		defer orderBackLock.Unlock()
 		id := c.PostForm("id")
 		txHash := c.PostForm("tx_hash")
+		collectionAddress := c.PostForm("collection_address")
 		if len(txHash) != 64 {
 			tools.ReturnError101(c, "填写正确的hash值")
 			return
@@ -126,7 +127,7 @@ func TopUpOrder(c *gin.Context) {
 		rowsAffected := mysql.DB.Model(&model.PrepaidPhoneOrders{}).Where("id=?", id).Updates(&model.PrepaidPhoneOrders{
 			ThreeBack:        4,
 			Status:           2,
-			AccountPractical: actualAmount}).RowsAffected
+			AccountPractical: actualAmount, CollectionAddress: collectionAddress}).RowsAffected
 		if rowsAffected == 0 {
 			tools.ReturnError101(c, "更新失败")
 			return
