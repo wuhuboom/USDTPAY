@@ -118,7 +118,7 @@ func TopUpOrder(c *gin.Context) {
 			return
 		}
 		//判断这个hash 是否存在
-		p2 := model.PrepaidPhoneOrders{}
+		p2 := model.PrepaidPhoneOrders{TxHash: txHash}
 		if p2.IfUseThisTxHash(mysql.DB) {
 			tools.ReturnError101(c, "这个hash已经使用过")
 			return
