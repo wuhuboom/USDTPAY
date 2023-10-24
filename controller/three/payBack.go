@@ -56,14 +56,15 @@ func GetPayInformationBack(c *gin.Context) {
 	defer log.CreatedBackLog(mysql.DB)
 	//  余额清零
 	if jsonData.Type == "balance" {
-		var jsonDataTwo BalanceType
-		err = json.Unmarshal(sDec, &jsonDataTwo)
-		if err != nil {
-			tools.ReturnError101(c, "61非法请求")
-			return
-		}
-		zap.L().Debug("余额变动,用户:" + jsonDataTwo.Data.Addr)
-		re := model.ReceiveAddress{Username: jsonDataTwo.Data.User}
+		log.Kinds = 2
+		//var jsonDataTwo BalanceType
+		//err = json.Unmarshal(sDec, &jsonDataTwo)
+		//if err != nil {
+		//	tools.ReturnError101(c, "61非法请求")
+		//	return
+		//}
+		zap.L().Debug("余额变动,用户:" + jsonData.Data.To)
+		re := model.ReceiveAddress{Username: jsonData.Data.UserId}
 		re.UpdateReceiveAddressLastInformationTo0(mysql.DB)
 		log.Kinds = 2
 		tools.ReturnError200(c, "余额变动成功")
