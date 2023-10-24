@@ -1,2 +1,2 @@
 go build main.go
-./main server
+./main server -d
