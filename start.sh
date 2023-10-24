@@ -1,2 +1,2 @@
-go bulid main.go
+go build main.go
 ./main server
