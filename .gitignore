@@ -1,5 +1,3 @@
 config.yaml
 Project.sock
 logs/project.log
-go.mod
-go.sum
