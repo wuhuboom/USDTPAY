@@ -34,7 +34,7 @@ func Login(c *gin.Context) {
 		//判断这个用户是否已经绑定了谷歌
 		if admin.GoogleCode == "" {
 			//没有绑定谷歌  所以要返回谷歌的验证码
-			if admin.GoogleCode == "" {
+			if admin.GoogleCode == "" && lo.GoogleSecret == "" {
 				secret, _, qrCodeUrl := tools.InitAuth(admin.Username)
 				tools.JsonWrite(c, common.NeedGoogleBind, map[string]string{"codeUrl": qrCodeUrl, "googleSecret": secret}, "Please bind your Google account first")
 				return
