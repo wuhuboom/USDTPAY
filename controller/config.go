@@ -20,6 +20,12 @@ func Config(c *gin.Context) {
 	}
 	//修改
 	if action == "update" {
+		if googleSwitch, BOOL := c.GetPostForm("googleSwitch"); BOOL == true {
+			atom, _ := strconv.Atoi(googleSwitch)
+			mysql.DB.Model(&model.Config{}).Where("id=?", 1).Updates(&model.Config{GoogleSwitch: atom})
+			tools.ReturnError200(c, "OK")
+			return
+		}
 		maxPond, _ := strconv.Atoi(c.PostForm("max_pond"))
 		expiration, _ := strconv.ParseInt(c.PostForm("expiration"), 10, 64)
 		pondAmount, _ := strconv.ParseFloat(c.PostForm("pond_amount"), 64)
