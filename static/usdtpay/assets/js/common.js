@@ -21,6 +21,24 @@ layui.config({  // common.js是配置layui扩展模块的目录，每个页面�
     var admin = layui.admin;
 
 
+    // /* table全局设置 */
+    // var token = '这里你可以从缓存中获取token';
+    // if (token && token.access_token) {
+    //
+    // }
+
+    layui.table.set({
+        parseData: function(res) {  // 利用parseData实现预处理
+            if(res.code == -103) { //token过期
+                // setter.removeToken();
+                layui.layer.msg('登录过期', {icon: 2, anim: 6, time: 1500}, function () {
+                    // location.replace('components/template/login/login.html');
+                });
+            }
+            return res;
+        }
+    });
+
 });
 
 /** 获取当前项目的根路径，通过获取layui.js全路径截取assets之前的地址 */

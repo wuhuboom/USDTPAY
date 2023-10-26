@@ -7,6 +7,9 @@ global_requestAddressJs_login = global_requestAddress+ "/v2/login";
 //获取菜单
 global_requestAddressJs_getMenus = global_requestAddress+ "/v2/getMenus";
 
+//获取控制台数据
+global_requestAddressJs_fistPage = global_requestAddress+ "/controller/fistPage";
+
 //获取充值订单/回调/修改备注
 global_requestAddressJs_topUpOrder = global_requestAddress+ "/order/topUpOrder";
 

@@ -65,9 +65,61 @@ func GetRole(c *gin.Context) {
 	//角色权限查看
 	if action == "viewPermissions" {
 		roleId := c.PostForm("role_id")
-		roleM := make([]model.RoleMenu, 0)
-		mysql.DB.Where("role_id=?", roleId).Find(&roleM)
-		tools.ReturnError200Data(c, roleM, "OK")
+		//roleM := make([]model.RoleMenu, 0)
+		//mysql.DB.Where("role_id=?", roleId).Find(&roleM)
+		//tools.ReturnError200Data(c, roleM, "OK")
+		mm := make([]model.Menu, 0)
+		err := mysql.DB.Raw("SELECT menus.id,menus.name,menus.belong,menus.path,menus.menu_kind,menus.action,"+
+			"menus.sort, menus.created FROM menus  LEFT JOIN  role_menus   "+
+			"ON  role_menus.menu_id=menus.id WHERE  menus.menu_kind=1 AND "+
+			" role_menus.role_id=?  AND  menus.belong=0 ORDER BY menus.sort  ASC", roleId).Scan(&mm).Error
+		if err != nil {
+			tools.ReturnError101(c, err.Error())
+			return
+		}
+		RoleID, _ := strconv.Atoi(roleId)
+		for i, menu := range mm {
+			mm[i].Value = menu.ID
+
+			m2 := make([]model.Menu, 0)
+			mysql.DB.Where("belong=? and menu_kind=1 ", menu.ID).Find(&m2)
+			for i2, m := range m2 {
+				m2[i2].Value = m.ID
+				per := make([]model.Menu, 0)
+				mysql.DB.Where("belong=? and menu_kind=2", m.ID).Find(&per)
+				m2[i2].Permissions = append(m2[i2].Permissions, per...)
+				roleMenu := model.RoleMenu{MenuId: m.ID, RoleId: RoleID}
+				if roleMenu.IfExist(mysql.DB) {
+					m2[i2].IfChoose = true
+					m2[i2].Check = true
+
+				}
+			}
+			mm[i].SecondaryMenu = append(mm[i].SecondaryMenu, m2...)
+			//添加permissions
+			per := make([]model.Menu, 0)
+			mysql.DB.Where("belong=? and menu_kind=2", menu.ID).Find(&per)
+
+			for pi, p := range per {
+				per[pi].Value = p.ID
+				roleMenu := model.RoleMenu{MenuId: p.ID, RoleId: RoleID}
+				if roleMenu.IfExist(mysql.DB) {
+					per[pi].IfChoose = true
+					per[pi].Check = true
+
+				}
+			}
+
+			mm[i].Permissions = append(mm[i].Permissions, per...)
+
+			//判断是否存在
+			roleMenu := model.RoleMenu{MenuId: menu.ID, RoleId: RoleID}
+			if roleMenu.IfExist(mysql.DB) {
+				mm[i].IfChoose = true
+				mm[i].Check = true
+			}
+		}
+		tools.ReturnError200Data(c, mm, "OK")
 		return
 	}
 	//更新角色权限

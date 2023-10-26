@@ -5,7 +5,7 @@ project:
   portFile: "Project.sock"
   name: "USDTPAY"
   limitIp: 2
-  ThreeUrl: "http://45.32.112.148"
+  ThreeUrl: "http://139.180.130.69"
   RechargingJumpAddress: "https://usdt.sssdk.xyz/static/pay/#/"
   ApiKey: "6e347830f78d544jshsjld177f7278fb8"
   OrderEffectivityTime: 250000  #秒 普通订单过期时间

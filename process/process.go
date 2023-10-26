@@ -16,10 +16,10 @@ func CratedPoolAddress(db *gorm.DB) {
 	for true {
 		var pondSize int64
 		db.Model(&model.ReceiveAddress{}).Where("kinds=?", 2).Count(&pondSize) //3
-		admin := model.Admin{}
+		//admin := model.Admin{}
 		config := model.Config{}
 		config.GetConfig(db)
-		db.Where("id=?", 1).First(&admin)
+		db.Where("id=?", 1).First(&config)
 		if int(pondSize) < config.MaxPond {
 			//池的地址  < 配置地址数量
 			needPool := config.MaxPond - int(pondSize)

@@ -130,7 +130,7 @@
     var mybck = $.cookie('tokenMybUP');
     //alert(document.cookie);
     // console.log(mybck)
-    var menu_list
+    var menu_list = []
     if (mybck == "" || mybck == null) {
 
         window.top.location.href = "../../login.html";
@@ -157,8 +157,26 @@
 
             let menuListStr =  localStorage.getItem('menuList')
             let menuListArr = JSON.parse(menuListStr)
-            console.log("menuListArr",menuListArr)
-            menu_list = menuListArr
+            // console.log("menuListArr",menuListArr)
+
+            menuListArr.forEach((item)=>{
+                menu_list.push({
+                    "id":item.id,
+                    "name":item.name,
+                    "pid":item.belong,
+                })
+
+                if(item.secondary_menu){
+                    existSubMenu(item.secondary_menu)
+                }
+
+                if(item.permissions){
+                    existSubPermissions(item.permissions)
+                }
+
+            })
+
+            // menu_list = menuListArr
 
             // //获取菜单列表
             // var param = {};
@@ -180,8 +198,47 @@
             // })
 
 
+            function existSubMenu(cell) {
+
+                // console.log("cell",cell)
+
+                cell.forEach(cellI=>{
+                    menu_list.push({
+                        "id":cellI.id,
+                        "name":cellI.name,
+                        "pid":cellI.belong,
+                    })
+
+                    if(cellI.secondary_menu){
+                        existSubMenu(cellI.secondary_menu)
+                    }
+
+                    if(cellI.permissions){
+                        existSubPermissions(cellI.permissions)
+                    }
+                })
+            }
 
 
+            function existSubPermissions(cell) {
+
+                // console.log("cell123",cell)
+
+                cell.forEach(cellI=>{
+                    menu_list.push({
+                        "id":cellI.id,
+                        "name":cellI.name,
+                        "pid":cellI.belong,
+                    })
+
+                    if(cellI.permissions){
+                        existSubMenu(cellI.permissions)
+                    }
+                })
+            }
+
+
+            // console.log("menu_list",menu_list)
 
 
 

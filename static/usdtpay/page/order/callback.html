@@ -40,6 +40,14 @@
             <input type="text" class="layui-input " id="tx_hash" placeholder="请在此输入交易hash">
         </div>
     </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">玩家地址</label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input " id="collection_address" placeholder="请在此输入玩家地址">
+        </div>
+    </div>
+
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">实际金额</label>
         <div class="layui-input-block">
@@ -101,6 +109,12 @@
                     return  false
                 }
 
+                if(!$('#collection_address').val()){
+                    layer.msg('玩家地址不允许为空！', {icon: 2});
+                    return  false
+                }
+
+
                 if(!$('#actual_amount').val()){
                     layer.msg('实际金额不允许为空！', {icon: 2});
                     return  false
@@ -112,7 +126,8 @@
                 formData['id'] = currParentDatas.id
                 formData.actual_amount = $('#actual_amount').val()
                 formData.tx_hash = $('#tx_hash').val()
-                console.log("formData",formData)
+                formData.collection_address = $('#collection_address').val()
+                // console.log("formData",formData)
                 $.ajax({
                     url:  global_requestAddressJs_topUpOrder ,
                     method: 'post',

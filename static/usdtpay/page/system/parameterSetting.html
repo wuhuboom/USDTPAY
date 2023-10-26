@@ -206,27 +206,25 @@
                 param.action = "update"
                 param['googleSwitch'] = $("#AdminGoogleStatus_switch").val();
 
-                layer.alert('没接口')
+                //获取期数添加到下拉框中
+                $.ajax({
+                    url: global_requestAddressJs_parameterSetting,
+                    dataType: 'json',
+                    headers:{
+                        token:mybck
+                    },
+                    type: 'post',
+                    data: param,
+                    success: function (resultData) {
 
-                // //获取期数添加到下拉框中
-                // $.ajax({
-                //     url: global_requestAddressJs_parameterSetting,
-                //     dataType: 'json',
-                //     headers:{
-                //         token:mybck
-                //     },
-                //     type: 'post',
-                //     data: param,
-                //     success: function (resultData) {
-                //
-                //         if(resultData.code == 200){
-                //             notice.msg(resultData.msg, {icon: 1});
-                //             // window.location.reload();
-                //         }else{
-                //             notice.msg(resultData.msg, {icon: 2});
-                //         }
-                //     }
-                // })
+                        if(resultData.code == 200){
+                            notice.msg(resultData.msg, {icon: 1});
+                            // window.location.reload();
+                        }else{
+                            notice.msg(resultData.msg, {icon: 2});
+                        }
+                    }
+                })
 
             })
 

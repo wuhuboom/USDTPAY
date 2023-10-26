@@ -30,3 +30,12 @@ func CheckIsExistModelRoleMenu(db *gorm.DB) {
 
 	}
 }
+
+// IfExist 是否存在
+func (r *RoleMenu) IfExist(db *gorm.DB) bool {
+	affected := db.Where("menu_id=? and  role_id=?", r.MenuId, r.RoleId).Limit(1).Find(r).RowsAffected
+	if affected == 0 {
+		return false
+	}
+	return true
+}

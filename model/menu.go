@@ -17,6 +17,9 @@ type Menu struct {
 	Created       int64  `json:"created"`
 	SecondaryMenu []Menu `json:"secondary_menu"  gorm:"-"`
 	Permissions   []Menu `json:"permissions"  gorm:"-"`
+	IfChoose      bool   `json:"if_choose" gorm:"-"` //是否被勾选
+	Value         int    `json:"value" gorm:"-"`
+	Check         bool   `json:"check" gorm:"-"`
 }
 
 // CheckIsExistModelMenu CheckIsExistModelAdmin 创建

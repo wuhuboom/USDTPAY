@@ -277,27 +277,30 @@
             var treeTable = layui.treeTable
             var laydate = layui.laydate;
 
+            let reqPar = {}
+            reqPar.action = "getAllMoney"
             // 获取余额接口
-            // $.ajax({
-            //     url: global_requestAddressJs_getAllMoney,
-            //     headers:{
-            //         token:mybck,
-            //     },
-            //     type: "get",
-            //     dataType: "json",
-            //     success: function (data) {
-            //         if (data.code === 200) {
-            //             $("#AllMoney").val(data.result)
-            //         }
-            //
-            //     },
-            //     error: function (data) {
-            //         layer.alert(JSON.stringify(data), {
-            //             title: data
-            //         });
-            //     }
-            //
-            // });
+            $.ajax({
+                url: global_requestAddressJs_toAddress,
+                headers:{
+                    token:mybck,
+                },
+                type: "post",
+                data:reqPar,
+                dataType: "json",
+                success: function (data) {
+                    if (data.code === 200) {
+                        $("#AllMoney").val(data.result)
+                    }
+
+                },
+                error: function (data) {
+                    layer.alert(JSON.stringify(data), {
+                        title: data
+                    });
+                }
+
+            });
 
 
             //开始日期组件常规用法
@@ -361,7 +364,7 @@
                 //     dataName: 'result',
                 // },
                 toolbar: true,
-                defaultToolbar: ['filter'],
+                defaultToolbar: ['filter','exports'],
                 where: request_param,
                 // toolbar: ['<p>',
                 //     '<button lay-event="add" class="layui-btn layui-btn-sm icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>&nbsp;',
@@ -947,33 +950,41 @@
             })
 
 
+            // 其他操作 - 获取更新总余额
             $("#updateMoney").click(function () {
 
-                layer.alert("没接口！")
-                //
-                // $.ajax({
-                //     url: global_requestAddressJs_getAllMoney,
-                //     headers:{
-                //         token:mybck,
-                //     },
-                //     type: "get",
-                //     dataType: "json",
-                //     success: function (data) {
-                //         if (data.code === 200) {
-                //             $("#AllMoney").val(data.result)
-                //             layer.msg("更新成功")
-                //         } else {
-                //             layer.msg("更新失败")
-                //         }
-                //     },
-                //     error: function (data) {
-                //         layer.alert(JSON.stringify(data), {
-                //             title: data
-                //         });
-                //
-                //     }
-                //
-                // });
+                let reqPar = {}
+                reqPar.action = "getAllMoney"
+                $.ajax({
+                    url: global_requestAddressJs_toAddress,
+                    headers:{
+                        token:mybck,
+                    },
+                    type: "post",
+                    data:reqPar,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code === 200) {
+                            $("#AllMoney").val(data.result)
+                            //弹窗
+                            layer.msg("更新成功", {icon: 1, time: 1500}, function () {
+
+                            });
+                        } else {
+                            //弹窗
+                            layer.msg("更新失败", {icon: 2, time: 1500}, function () {
+
+                            });
+                        }
+                    },
+                    error: function (data) {
+                        layer.alert(JSON.stringify(data), {
+                            title: data
+                        });
+
+                    }
+
+                });
 
                 return false
             })

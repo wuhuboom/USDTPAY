@@ -64,7 +64,7 @@
                     <dd lay-unselect><a ew-href="page/template/user-info.html">个人中心</a></dd>
                     <dd lay-unselect><a ew-event="psw">修改密码</a></dd>
                     <hr>
-                    <dd lay-unselect><a ew-event="logout" data-url="./login.html">退出</a></dd>
+                    <dd lay-unselect><a id="logoutBtn" >退出</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item" lay-unselect>
@@ -76,7 +76,8 @@
     <!-- 侧边栏 -->
     <div class="layui-side">
         <div class="layui-side-scroll">
-            <ul class="layui-nav layui-nav-tree arrow2" lay-filter="admin-side-nav" lay-shrink="_all">
+<!--            lay-shrink="_all"-->
+            <ul class="layui-nav layui-nav-tree arrow2" lay-filter="admin-side-nav">
 
 
 <!--                <li class="layui-nav-item">-->
@@ -126,10 +127,11 @@
     document.write('<script src="./assets/js/config.url.js?ttv='+new Date().getTime()+'" type="text/javascript" ><\/script>');
 </script>
 <!--{{console.log("模板item",item)}}-->
+<!--layui-nav-itemed-->
 <script id="sideNav" type="text/html">
     {{#  layui.each(d, function(index, item){ }}
 
-    <li class="layui-nav-item">
+    <li class="layui-nav-item ">
         <a lay-href="{{item.url}}" data-id="{{item.id_item}}"><i class="{{item.icon}}"></i>&emsp;<cite>{{ item.name }}</cite></a>
         {{# if(item.subMenus&&item.subMenus.length>0){ getSubMenus(item.subMenus); } }}
     </li>
@@ -148,309 +150,337 @@
 
 <script>
 
-    // localStorage.removeItem("easyweb-iframe")
-    // // "tabAutoRefresh":false,
-    // var localJSON = JSON.stringify({"defaultTheme":"theme-colorful"})
-    // localStorage.setItem("easyweb-iframe",localJSON);
+    var mybck = $.cookie('tokenMybUP');
+    // console.log("mybck",mybck)
+    if (mybck == "" || mybck == null || !mybck) {
+        window.top.location.href = "./login.html";
 
-    // cacheTab: true
-    // closeFooter: false
-    // defaultTheme: "theme-colorful"
-    // tabAutoRefresh: true
-var menuListArr;
+    } else {
+        // localStorage.removeItem("easyweb-iframe")
+        // // "tabAutoRefresh":false,
+        // var localJSON = JSON.stringify({"defaultTheme":"theme-colorful"})
+        // localStorage.setItem("easyweb-iframe",localJSON);
 
-    layui.use(['index','admin','element','laytpl'], function () {
-        var $ = layui.jquery;
-        var index = layui.index;
-        var admin = layui.admin;
-        var element = layui.element;
-        var laytpl = layui.laytpl;
+        // cacheTab: true
+        // closeFooter: false
+        // defaultTheme: "theme-colorful"
+        // tabAutoRefresh: true
+        var menuListArr;
 
-        // //获取配置数据
-        // $.ajax({
-        //     url: global_requestAddress + global_requestAddress_js_systemParameter+"?action=select",
-        //     headers:{
-        //         token:$.cookie('tokenMybUP')
-        //     },
-        //     dataType: 'json',
-        //     type: 'post',
-        //     data: {},
-        //     success: function (dataArray) {
-        //         if (dataArray.code != 2000) {
-        //             return false;
-        //         }
-        //         var returnDataArray = dataArray.result
-        //         currTimeZoneNameStr = returnDataArray.TimeZone
-        //         $("#timeStrZome").text(currTimeZoneNameStr)
-        //     }
-        // })
+        layui.use(['index', 'admin', 'element', 'laytpl'], function () {
+            var $ = layui.jquery;
+            var index = layui.index;
+            var admin = layui.admin;
+            var element = layui.element;
+            var laytpl = layui.laytpl;
 
-        let loadU = localStorage.getItem('up_AdminUsername')
+            // //获取配置数据
+            // $.ajax({
+            //     url: global_requestAddress + global_requestAddress_js_systemParameter+"?action=select",
+            //     headers:{
+            //         token:$.cookie('tokenMybUP')
+            //     },
+            //     dataType: 'json',
+            //     type: 'post',
+            //     data: {},
+            //     success: function (dataArray) {
+            //         if (dataArray.code != 2000) {
+            //             return false;
+            //         }
+            //         var returnDataArray = dataArray.result
+            //         currTimeZoneNameStr = returnDataArray.TimeZone
+            //         $("#timeStrZome").text(currTimeZoneNameStr)
+            //     }
+            // })
 
-        // console.log("loadU",loadU)
+            let loadU = localStorage.getItem('up_AdminUsername')
 
-        $("#loadingUserName").text(loadU)
+            // console.log("loadU",loadU)
 
-        if (layui.admin.setter.pageTabs && layui.admin.setter.tabAutoRefresh == true){
-            $('.layui-layout-admin>.layui-body>.layui-tab').attr('lay-autoRefresh', 'true');
-        }
+            $("#loadingUserName").text(loadU)
 
-
-        //获取配置数据
-        $.ajax({
-            url:  global_requestAddressJs_getMenus,
-            headers:{
-                token:$.cookie('tokenMybUP')
-            },
-            dataType: 'json',
-            type: 'get',
-            success: function (dataArray) {
-                if (dataArray.code != 200) {
-                    layer.msg("获取菜单失败！", {icon: 2, time: 1500}, function () {
-                    });
-                    return false;
-                }
+            if (layui.admin.setter.pageTabs && layui.admin.setter.tabAutoRefresh == true) {
+                $('.layui-layout-admin>.layui-body>.layui-tab').attr('lay-autoRefresh', 'true');
+            }
 
 
-                menuListArr = dataArray.result
+            //获取配置数据
+            $.ajax({
+                url: global_requestAddressJs_getMenus,
+                headers: {
+                    token: $.cookie('tokenMybUP')
+                },
+                dataType: 'json',
+                type: 'get',
+                success: function (dataArray) {
 
-                if(menuListArr){
-                    localStorage.setItem('menuList',JSON.stringify(menuListArr))
-                }else{
-                    localStorage.setItem('menuList',[])
-                }
+                    if (dataArray.code == -103) {
+                        layer.msg("登录已过期！", {icon: 2, time: 1500}, function () {
 
+                            window.location.href = "./login.html";
+                        });
 
-
-                // console.log("menuListArr",menuListArr)
-                //方式1 ------ 头
-                let menuArray = []
-                menuListArr.forEach((item)=>{
-                    if (item.secondary_menu) { //存在子菜单
-                        let secondArr = []
-                        let itemIsCheck = 0
-                        item.secondary_menu.forEach((itemS)=>{
-                            // console.log("itemS子菜单",itemS)
-                            // if(itemS.Add === 0 && itemS.Delete === 0 && itemS.Read === 0 && itemS.Update === 0){
-                            //     itemIsCheck = itemIsCheck + 1
-                            // }else{
-                            //
-                            // }
-
-                            itemS.href = 'page'+itemS.path+".html"
-                            itemS.name = itemS.name
-                            itemS.url = 'page'+itemS.path+".html"
-                            itemS.ID = itemS.id
-                            secondArr.push({
-                                "href":'page'+itemS.path+".html",
-                                "name" : itemS.name,
-                                "url" :'page'+itemS.path+".html",
-                                "icon":itemS.icon,
-                                "id_item":itemS.id
-                            })
-                        })
-
-                        // console.log("itemIsCheck",itemIsCheck)
-                        //
-                        // if(itemIsCheck ===   item.secondary_menu.length){
-                        //     // console.log("111")
-                        //     // item.checkIsNum = itemIsCheck
-                        // }else{
-                        //
-                        //     menuArray.push({
-                        //         "subMenus" :secondArr,
-                        //         "name" : item.name,
-                        //         "url" :  "javascript:;",
-                        //         "icon":item.icon
-                        //     })
-                        //
-                        //     item.name = item.name
-                        //     item.subMenus = secondArr
-                        //     item.url = "javascript:;"
-                        // }
-
-
-                        menuArray.push({
-                            "subMenus" :secondArr,
-                            "name" : item.name,
-                            "url" :  "javascript:;",
-                            "icon":item.icon,
-                            "id_item":item.id
-                        })
-
-                        item.name = item.name
-                        item.subMenus = secondArr
-                        item.url = "javascript:;"
-                        item.ID = item.id
-
-                        // console.log("secondArr",secondArr)
-
-                        // item.icon =  "iconfont icon-xitong6"
-                    }else{//不存在子菜单
-
-                        if(item.name == "控制台"){
-                            item.href = 'page/console/console.html'
-                            item.name = item.name
-                            item.url = 'page/console/console.html'
-                            item.ID =  "console"
-                            // item.icon =  "layui-icon layui-icon-home"
-
-                            menuArray.push({
-                                "href" : 'page/console/console.html',
-                                "name" : item.name,
-                                "url" : 'page/console/console.html',
-                                "icon":item.icon,
-                                "id_item":"console"
-                            })
-                        }else{
-                            menuArray.push({
-                                "href" : 'page'+item.path,
-                                "name" : item.name,
-                                "url" : 'page'+item.path,
-                                "icon":item.icon,
-                                "id_item":item.id
-                            })
-                        }
+                        return false;
                     }
 
-                })
-                // console.log("menuListArr",menuListArr)
-                // console.log("menuArray",menuArray)
-                laytpl(sideNav.innerHTML).render(menuArray, function (html) {
-                    $('[lay-filter=admin-side-nav]').html(html);
-                    element.render('nav', 'admin-side-nav');  // 这里非常重要
 
-                    // 默认加载主页
-                    index.loadHome({
-                        menuPath: 'page/console/console.html',
-                        menuName: '<i class="layui-icon layui-icon-home"></i>'
+                    if (dataArray.code != 200) {
+                        layer.msg("获取菜单失败！", {icon: 2, time: 1500}, function () {
+                        });
+                        return false;
+                    }
+
+
+                    menuListArr = dataArray.result
+
+                    if (menuListArr) {
+                        localStorage.setItem('menuList', JSON.stringify(menuListArr))
+                    } else {
+                        localStorage.setItem('menuList', [])
+                    }
+
+
+                    // console.log("menuListArr",menuListArr)
+                    //方式1 ------ 头
+                    let menuArray = []
+                    menuListArr.forEach((item) => {
+                        if (item.secondary_menu) { //存在子菜单
+                            let secondArr = []
+                            let itemIsCheck = 0
+                            item.secondary_menu.forEach((itemS) => {
+                                // console.log("itemS子菜单",itemS)
+                                // if(itemS.Add === 0 && itemS.Delete === 0 && itemS.Read === 0 && itemS.Update === 0){
+                                //     itemIsCheck = itemIsCheck + 1
+                                // }else{
+                                //
+                                // }
+
+                                itemS.href = 'page' + itemS.path + ".html"
+                                itemS.name = itemS.name
+                                itemS.url = 'page' + itemS.path + ".html"
+                                itemS.ID = itemS.id
+                                secondArr.push({
+                                    "href": 'page' + itemS.path + ".html",
+                                    "name": itemS.name,
+                                    "url": 'page' + itemS.path + ".html",
+                                    "icon": itemS.icon,
+                                    "id_item": itemS.id
+                                })
+                            })
+
+                            // console.log("itemIsCheck",itemIsCheck)
+                            //
+                            // if(itemIsCheck ===   item.secondary_menu.length){
+                            //     // console.log("111")
+                            //     // item.checkIsNum = itemIsCheck
+                            // }else{
+                            //
+                            //     menuArray.push({
+                            //         "subMenus" :secondArr,
+                            //         "name" : item.name,
+                            //         "url" :  "javascript:;",
+                            //         "icon":item.icon
+                            //     })
+                            //
+                            //     item.name = item.name
+                            //     item.subMenus = secondArr
+                            //     item.url = "javascript:;"
+                            // }
+
+
+                            menuArray.push({
+                                "subMenus": secondArr,
+                                "name": item.name,
+                                "url": "javascript:;",
+                                "icon": item.icon,
+                                "id_item": item.id
+                            })
+
+                            item.name = item.name
+                            item.subMenus = secondArr
+                            item.url = "javascript:;"
+                            item.ID = item.id
+
+                            // console.log("secondArr",secondArr)
+
+                            // item.icon =  "iconfont icon-xitong6"
+                        } else {//不存在子菜单
+
+                            if (item.name == "控制台") {
+                                item.href = 'page/console/console.html'
+                                item.name = item.name
+                                item.url = 'page/console/console.html'
+                                item.ID = "console"
+                                // item.icon =  "layui-icon layui-icon-home"
+
+                                menuArray.push({
+                                    "href": 'page/console/console.html',
+                                    "name": item.name,
+                                    "url": 'page/console/console.html',
+                                    "icon": item.icon,
+                                    "id_item": "console"
+                                })
+                            } else {
+                                menuArray.push({
+                                    "href": 'page' + item.path,
+                                    "name": item.name,
+                                    "url": 'page' + item.path,
+                                    "icon": item.icon,
+                                    "id_item": item.id
+                                })
+                            }
+                        }
+
+                    })
+                    // console.log("menuListArr",menuListArr)
+                    // console.log("menuArray",menuArray)
+                    laytpl(sideNav.innerHTML).render(menuArray, function (html) {
+                        $('[lay-filter=admin-side-nav]').html(html);
+                        element.render('nav', 'admin-side-nav');  // 这里非常重要
+
+                        // 默认加载主页
+                        index.loadHome({
+                            menuPath: 'page/console/console.html',
+                            menuName: '<i class="layui-icon layui-icon-home"></i>'
+                        });
+
                     });
+                    //方式1 ------ 尾巴
 
-                });
-                //方式1 ------ 尾巴
+                },
+                error:function(xhr){
+                    layer.closeAll();
+                }
+            })
 
-            }
-        })
+            admin.putSetting('tabAutoRefresh', true);
 
-        admin.putSetting('tabAutoRefresh', true);
-
-        // // 默认加载主页,如果静态的时候就得放前边
-        // index.loadHome({
-        //     menuPath: 'page/console/console.html',
-        //     menuName: '<i class="layui-icon layui-icon-home"></i>'
-        // });
-
-
-        // console.log("navArray",typeof navArray)
-
-        // let menuListStr =  localStorage.getItem('menuList')
-
-        // let menuListStr = "[{\"id\":1,\"name\":\"控制台\",\"belong\":0,\"path\":\"\",\"menu_kind\":1,\"action\":\"\",\"sort\":1,\"created\":0,\"secondary_menu\":null},{\"id\":2,\"name\":\"日志管理\",\"belong\":0,\"path\":\"\",\"menu_kind\":1,\"action\":\"\",\"sort\":2,\"created\":0,\"secondary_menu\":null},{\"id\":4,\"name\":\"订单管理\",\"belong\":0,\"path\":\"order\",\"menu_kind\":1,\"action\":\"\",\"sort\":3,\"created\":0,\"secondary_menu\":[{\"id\":410,\"name\":\"系统参数\",\"belong\":4,\"path\":\"/system/parameterSetting\",\"menu_kind\":1,\"action\":\"\",\"sort\":0,\"created\":1696890280,\"secondary_menu\":null},{\"id\":411,\"name\":\"用户管理\",\"belong\":4,\"path\":\"/system/userManagement\",\"menu_kind\":1,\"action\":\"\",\"sort\":0,\"created\":1696890280,\"secondary_menu\":null},{\"id\":412,\"name\":\"角色管理\",\"belong\":4,\"path\":\"/system/roleManagement\",\"menu_kind\":1,\"action\":\"\",\"sort\":0,\"created\":1696890280,\"secondary_menu\":null}]},{\"id\":5,\"name\":\"地址管理\",\"belong\":0,\"path\":\"address\",\"menu_kind\":1,\"action\":\"\",\"sort\":4,\"created\":0,\"secondary_menu\":[{\"id\":510,\"name\":\"充值订单\",\"belong\":5,\"path\":\"/order/topUpOrder\",\"menu_kind\":1,\"action\":\"\",\"sort\":0,\"created\":1696890280,\"secondary_menu\":null}]},{\"id\":3,\"name\":\"系统管理\",\"belong\":0,\"path\":\"/system\",\"menu_kind\":1,\"action\":\"\",\"sort\":8,\"created\":0,\"secondary_menu\":null}]"
-
-        // let menuListArr = JSON.parse(menuListStr)
+            // // 默认加载主页,如果静态的时候就得放前边
+            // index.loadHome({
+            //     menuPath: 'page/console/console.html',
+            //     menuName: '<i class="layui-icon layui-icon-home"></i>'
+            // });
 
 
+            // console.log("navArray",typeof navArray)
+
+            // let menuListStr =  localStorage.getItem('menuList')
+
+            // let menuListStr = "[{\"id\":1,\"name\":\"控制台\",\"belong\":0,\"path\":\"\",\"menu_kind\":1,\"action\":\"\",\"sort\":1,\"created\":0,\"secondary_menu\":null},{\"id\":2,\"name\":\"日志管理\",\"belong\":0,\"path\":\"\",\"menu_kind\":1,\"action\":\"\",\"sort\":2,\"created\":0,\"secondary_menu\":null},{\"id\":4,\"name\":\"订单管理\",\"belong\":0,\"path\":\"order\",\"menu_kind\":1,\"action\":\"\",\"sort\":3,\"created\":0,\"secondary_menu\":[{\"id\":410,\"name\":\"系统参数\",\"belong\":4,\"path\":\"/system/parameterSetting\",\"menu_kind\":1,\"action\":\"\",\"sort\":0,\"created\":1696890280,\"secondary_menu\":null},{\"id\":411,\"name\":\"用户管理\",\"belong\":4,\"path\":\"/system/userManagement\",\"menu_kind\":1,\"action\":\"\",\"sort\":0,\"created\":1696890280,\"secondary_menu\":null},{\"id\":412,\"name\":\"角色管理\",\"belong\":4,\"path\":\"/system/roleManagement\",\"menu_kind\":1,\"action\":\"\",\"sort\":0,\"created\":1696890280,\"secondary_menu\":null}]},{\"id\":5,\"name\":\"地址管理\",\"belong\":0,\"path\":\"address\",\"menu_kind\":1,\"action\":\"\",\"sort\":4,\"created\":0,\"secondary_menu\":[{\"id\":510,\"name\":\"充值订单\",\"belong\":5,\"path\":\"/order/topUpOrder\",\"menu_kind\":1,\"action\":\"\",\"sort\":0,\"created\":1696890280,\"secondary_menu\":null}]},{\"id\":3,\"name\":\"系统管理\",\"belong\":0,\"path\":\"/system\",\"menu_kind\":1,\"action\":\"\",\"sort\":8,\"created\":0,\"secondary_menu\":null}]"
+
+            // let menuListArr = JSON.parse(menuListStr)
 
 
+            // // 方式二 ------ 头
+            // menuListArr.forEach((item)=>{
+            //     if (item.secondary_menu) {
+            //
+            //         item.secondary_menu.forEach((itemS)=>{
+            //             itemS.href = 'page'+itemS.path+".html"
+            //         })
+            //     }else{
+            //         console.log("item",item)
+            //
+            //
+            //         if(item.name == "控制台"){
+            //             item.href = 'page/console/console.html'
+            //         }else{
+            //             item.href =  'page'+item.path+".html"
+            //         }
+            //     }
+            //
+            // })
+            //
+            //
+            // // console.log("menuListArr",menuListArr)
+            //
+            // let navArray = []
+            // $.each(menuListArr,function(i,obj){
+            //     // console.log(obj);
+            //     // console.log(obj.children);
+            //     var content='<li class="layui-nav-item" data-name='+obj.action+'>';
+            //     //判断是否存在下一级栏目，存在就不跳转，不存在就跳转
+            //     if (!obj.secondary_menu) {
+            //         // console.log("进来-无节点",obj.href)
+            //         // content+='<a href="'+'/'+obj.app+'/'+obj.controller+'/'+obj.action+'"><i class="layui-icon '+obj.icon+'"></i><cite>'+obj.name+'</cite></a>';
+            //
+            //
+            //         if(obj.name == "控制台"){
+            //             content+='<a lay-href="'+obj.href+'"><i class="layui-icon '+obj.icon+'"></i>&emsp;<cite>'+obj.name+'</cite></a>';
+            //         }else{
+            //             content+='<a lay-href="'+'page'+obj.href+'"><i class="layui-icon '+obj.icon+'"></i>&emsp;<cite>'+obj.name+'</cite></a>';
+            //         }
+            //
+            //     }else{
+            //
+            //         // console.log("进来-有节点",obj.children) href="javascript:;"
+            //         content+='<a ><i class="layui-icon '+obj.icon+'"></i>&emsp;<cite>'+obj.name+'</cite></a>';
+            //     }
+            //
+            //     //这里是添加所有的子菜单
+            //     content+=loadchild(obj);
+            //     content+='</li>';
+            //     console.log("content",content)
+            //     $(".layui-nav-tree").append(content);
+            // })
+            //
+            //
+            // element.init();
+            //
+            // //组装子菜单的方法
+            // function loadchild(obj){
+            //     if(obj==null){
+            //         return;
+            //     }
+            //     var content='';
+            //     if(obj.secondary_menu!=null && obj.secondary_menu.length>0){
+            //         content+='<dl class="layui-nav-child">';
+            //     }else{
+            //         content+='<dl>';
+            //     }
+            //
+            //     if(obj.secondary_menu!=null && obj.secondary_menu.length>0){
+            //         // console.log("111",obj.secondary_menu)
+            //         $.each(obj.secondary_menu,function(i,note){
+            //             // console.log("note",note.Add)
+            //             content+='<dd>';
+            //             // content+='<a href="'+'/'+note.app+'/'+note.controller+'/'+note.action+'">'+note.name+'</a>';
+            //             content+='<a lay-href="'+note.href+'">'+note.name+'</a>';
+            //
+            //             if(note.secondary_menu==null){
+            //                 return;
+            //             }
+            //             content+=loadchild(note);
+            //             content+='</dd>';
+            //         });
+            //
+            //         content+='</dl>';
+            //     }
+            //     return content;
+            // }
+            //
+            //  // 默认加载主页
+            //  index.loadHome({
+            //      menuPath: 'page/console/console.html',
+            //      menuName: '<i class="layui-icon layui-icon-home"></i>'
+            //  });
 
-        // // 方式二 ------ 头
-        // menuListArr.forEach((item)=>{
-        //     if (item.secondary_menu) {
-        //
-        //         item.secondary_menu.forEach((itemS)=>{
-        //             itemS.href = 'page'+itemS.path+".html"
-        //         })
-        //     }else{
-        //         console.log("item",item)
-        //
-        //
-        //         if(item.name == "控制台"){
-        //             item.href = 'page/console/console.html'
-        //         }else{
-        //             item.href =  'page'+item.path+".html"
-        //         }
-        //     }
-        //
-        // })
-        //
-        //
-        // // console.log("menuListArr",menuListArr)
-        //
-        // let navArray = []
-        // $.each(menuListArr,function(i,obj){
-        //     // console.log(obj);
-        //     // console.log(obj.children);
-        //     var content='<li class="layui-nav-item" data-name='+obj.action+'>';
-        //     //判断是否存在下一级栏目，存在就不跳转，不存在就跳转
-        //     if (!obj.secondary_menu) {
-        //         // console.log("进来-无节点",obj.href)
-        //         // content+='<a href="'+'/'+obj.app+'/'+obj.controller+'/'+obj.action+'"><i class="layui-icon '+obj.icon+'"></i><cite>'+obj.name+'</cite></a>';
-        //
-        //
-        //         if(obj.name == "控制台"){
-        //             content+='<a lay-href="'+obj.href+'"><i class="layui-icon '+obj.icon+'"></i>&emsp;<cite>'+obj.name+'</cite></a>';
-        //         }else{
-        //             content+='<a lay-href="'+'page'+obj.href+'"><i class="layui-icon '+obj.icon+'"></i>&emsp;<cite>'+obj.name+'</cite></a>';
-        //         }
-        //
-        //     }else{
-        //
-        //         // console.log("进来-有节点",obj.children) href="javascript:;"
-        //         content+='<a ><i class="layui-icon '+obj.icon+'"></i>&emsp;<cite>'+obj.name+'</cite></a>';
-        //     }
-        //
-        //     //这里是添加所有的子菜单
-        //     content+=loadchild(obj);
-        //     content+='</li>';
-        //     console.log("content",content)
-        //     $(".layui-nav-tree").append(content);
-        // })
-        //
-        //
-        // element.init();
-        //
-        // //组装子菜单的方法
-        // function loadchild(obj){
-        //     if(obj==null){
-        //         return;
-        //     }
-        //     var content='';
-        //     if(obj.secondary_menu!=null && obj.secondary_menu.length>0){
-        //         content+='<dl class="layui-nav-child">';
-        //     }else{
-        //         content+='<dl>';
-        //     }
-        //
-        //     if(obj.secondary_menu!=null && obj.secondary_menu.length>0){
-        //         // console.log("111",obj.secondary_menu)
-        //         $.each(obj.secondary_menu,function(i,note){
-        //             // console.log("note",note.Add)
-        //             content+='<dd>';
-        //             // content+='<a href="'+'/'+note.app+'/'+note.controller+'/'+note.action+'">'+note.name+'</a>';
-        //             content+='<a lay-href="'+note.href+'">'+note.name+'</a>';
-        //
-        //             if(note.secondary_menu==null){
-        //                 return;
-        //             }
-        //             content+=loadchild(note);
-        //             content+='</dd>';
-        //         });
-        //
-        //         content+='</dl>';
-        //     }
-        //     return content;
-        // }
-        //
-        //  // 默认加载主页
-        //  index.loadHome({
-        //      menuPath: 'page/console/console.html',
-        //      menuName: '<i class="layui-icon layui-icon-home"></i>'
-        //  });
+
+            // // 方式二 ------ 尾
 
 
-        // // 方式二 ------ 尾
+            $("#logoutBtn").click(function () {
 
-    });
+
+                $.removeCookie('tokenMybUP')
+                window.location.href = "./login.html";
+                return false
+            })
+
+
+        });
+
+    }
 </script>
 </body>
 </html>
