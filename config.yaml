@@ -1,6 +1,6 @@
 # 程序基本配置
 project:
-  listeningPort: 7777  # 监听端口号
+  #listeningPort: 7777  # 监听端口号
   port: 7777
   portFile: "Project.sock"
   name: "USDTPAY"
