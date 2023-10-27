@@ -112,7 +112,6 @@ func ConsoleManagement(c *gin.Context) {
 		} else {
 			Data.AllSuccessPer = float64(Data.AllPullOrderCountAndSuccess / Data.AllPullOrderCount)
 		}
-
 		tools.ReturnError200Data(c, Data, "success")
 		return
 	}

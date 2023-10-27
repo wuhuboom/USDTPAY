@@ -118,20 +118,20 @@ func TopUpOrder(c *gin.Context) {
 			tools.ReturnError101(c, "不要重复回调")
 			return
 		}
+
 		//判断这个hash 是否存在
 		p2 := model.PrepaidPhoneOrders{TxHash: txHash}
 		if p2.IfUseThisTxHash(mysql.DB) {
 			tools.ReturnError101(c, "这个hash已经使用过")
 			return
 		}
-		rowsAffected := mysql.DB.Model(&model.PrepaidPhoneOrders{}).Where("id=?", id).Updates(&model.PrepaidPhoneOrders{
-			ThreeBack:        4,
-			Status:           2,
-			AccountPractical: actualAmount, CollectionAddress: collectionAddress}).RowsAffected
-		if rowsAffected == 0 {
-			tools.ReturnError101(c, "更新失败")
-			return
-		}
+
+		updates := model.PrepaidPhoneOrders{
+			ThreeBack:         4,
+			Status:            2,
+			AccountPractical:  actualAmount,
+			CollectionAddress: collectionAddress,
+			TxHash:            txHash}
 
 		//回调给三方
 		type Create struct {
@@ -152,11 +152,21 @@ func TopUpOrder(c *gin.Context) {
 		tt.RechargeType = p.RechargeType
 		data, err := json.Marshal(tt)
 		if err != nil {
+			updates.ErrString = err.Error()
 			tools.ReturnError101(c, err.Error())
 			return
 		}
 		data, err = util.RsaEncryptForEveryOne(data)
-		util.BackUrlToPay(p.BackUrl, base64.StdEncoding.EncodeToString(data))
+		updates.FootballBackData, err = util.BackUrlToPay(p.BackUrl, base64.StdEncoding.EncodeToString(data))
+		if err != nil {
+			updates.ErrString = err.Error()
+			return
+		}
+		rowsAffected := mysql.DB.Model(&model.PrepaidPhoneOrders{}).Where("id=?", id).Updates(&updates).RowsAffected
+		if rowsAffected == 0 {
+			tools.ReturnError101(c, "更新失败")
+			return
+		}
 		tools.ReturnError200(c, "回调成功")
 		return
 	}

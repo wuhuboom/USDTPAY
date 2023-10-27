@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-//私钥
+// 私钥
 var privateKey = []byte(`
 -----BEGIN RSA Private Key-----
 MIIEpAIBAAKCAQEAoEixcgAPmLpHLEDh3P8eGpxolNbGJoxbrNQU1kaRCTMiu5qT
@@ -46,7 +46,7 @@ TuIT9b1m+Ao/IA19g76Mr+uzQnJYZN2kxewqkI+x05yARTXPoSIRHg==
 `)
 
 // 公钥: 根据私钥生成
-//openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem
+// openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem
 var publicKey = []byte(`
 -----BEGIN RSA Public Key-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoEixcgAPmLpHLEDh3P8e
@@ -116,7 +116,7 @@ func RsaEncrypt(origData []byte) ([]byte, error) {
 
 	}
 	// 类型断言
-	
+
 	pub := pubInterface.(*rsa.PublicKey)
 	//加密
 	return rsa.EncryptPKCS1v15(rand.Reader, pub, origData)
@@ -178,7 +178,7 @@ func RsaDecryptForEveryOne(ciphertext []byte) ([]byte, error) {
 }
 
 // BackUrlToPay 第三方支付回调方法
-func BackUrlToPay(backUrl string, bytesData string) (bool, error) {
+func BackUrlToPay(backUrl string, bytesData string) (string, error) {
 	type TT struct {
 		Code   int
 		Msg    string
@@ -193,23 +193,22 @@ func BackUrlToPay(backUrl string, bytesData string) (bool, error) {
 	data, err := json.Marshal(tt)
 	fmt.Println(string(data))
 	if err != nil {
-		return false, err
+		return string(data), err
 	}
 	reader := bytes.NewReader(data)
 	post, err := http.Post(backUrl, "", reader)
 
 	if err != nil {
 		zap.L().Debug("回调地址:" + backUrl + "错误:" + err.Error())
-		return false, err
+		return string(data), err
 	}
 	respBytes, err1 := ioutil.ReadAll(post.Body)
 	if err1 != nil {
 		zap.L().Debug("回调地址:" + backUrl + "错误:" + err1.Error())
-		return false, err1
+		return string(data), err1
 	}
 	zap.L().Debug("回调地址:" + backUrl + " 返回结果:" + string(respBytes))
 	fmt.Println("回调地址:" + backUrl + " 返回结果:" + string(respBytes))
-
 
 	//type T struct {
 	//	Code   int    `json:"Code"`
@@ -230,5 +229,5 @@ func BackUrlToPay(backUrl string, bytesData string) (bool, error) {
 	//}
 	//
 	//zap.L().Debug("回调地址:" + backUrl + "成功")
-	return true, nil
+	return string(data), nil
 }
