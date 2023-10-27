@@ -191,3 +191,17 @@ func CheckLastGetMoneyTime(db *gorm.DB) {
 		time.Sleep(time.Minute * 60 * 24)
 	}
 }
+
+func Repair(db *gorm.DB) {
+	pp := make([]model.PrepaidPhoneOrders, 0)
+	db.Find(&pp)
+	for _, i2 := range pp {
+		t := time.Unix(i2.Created, 0)
+		db.Model(&model.PrepaidPhoneOrders{}).Where("id=?", i2.ID).Updates(&model.PrepaidPhoneOrders{
+			Date: t.Format("2006-01-02"),
+		})
+		fmt.Println("--")
+	}
+
+	fmt.Println("修复完毕")
+}

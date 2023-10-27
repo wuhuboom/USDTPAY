@@ -2,12 +2,15 @@ package controller
 
 import (
 	"example.com/m/common"
+	"example.com/m/cron"
 	"example.com/m/dao/mysql"
 	"example.com/m/dao/redis"
 	"example.com/m/model"
 	"example.com/m/tools"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -79,6 +82,7 @@ func Login(c *gin.Context) {
 // ConsoleManagement 控制台查看
 func ConsoleManagement(c *gin.Context) {
 	action := c.PostForm("action")
+	//获取数据
 	if action == "check" {
 		var Data ConsoleManagementData
 		//今日成功订单个数
@@ -97,10 +101,10 @@ func ConsoleManagement(c *gin.Context) {
 		if Data.TodayPullOrderCount == 0 {
 			Data.TodaySuccessPer = 0
 		} else {
-			Data.TodaySuccessPer = float64(Data.TodayPullOrderCountAndSuccess / Data.TodayPullOrderCount)
+			Data.TodaySuccessPer = float64(Data.TodayPullOrderCountAndSuccess) / float64(Data.TodayPullOrderCount)
 		}
 		//总成功订单个数
-		mysql.DB.Model(&model.PrepaidPhoneOrders{}).Where("status =? ", 2).Count(&Data.AllPullOrderCount)
+		mysql.DB.Model(&model.PrepaidPhoneOrders{}).Where("status =? ", 2).Count(&Data.AllPullOrderCountAndSuccess)
 		//总订单数
 		mysql.DB.Model(&model.PrepaidPhoneOrders{}).Count(&Data.AllPullOrderCount)
 		//总拉起订单金额
@@ -110,10 +114,44 @@ func ConsoleManagement(c *gin.Context) {
 		if Data.AllPullOrderCount == 0 {
 			Data.AllSuccessPer = 0
 		} else {
-			Data.AllSuccessPer = float64(Data.AllPullOrderCountAndSuccess / Data.AllPullOrderCount)
+			Data.AllSuccessPer = float64(Data.AllPullOrderCountAndSuccess) / float64(Data.AllPullOrderCount)
 		}
 		tools.ReturnError200Data(c, Data, "success")
 		return
 	}
-
+	//更新指定日期
+	if action == "updateDate" {
+		date := c.PostForm("date")
+		if date == "" {
+			tools.ReturnError101(c, "输入正确日期")
+			return
+		}
+		var Data model.ConsoleManagementData
+		Data.Date = date
+		cron.ReturnConsoleManagementData(&Data, mysql.DB, date)
+		Data.CreatedConsoleManagementData(mysql.DB)
+		tools.ReturnError200(c, "OK")
+		return
+	}
+	//获取每日数据分页
+	if action == "everyday" {
+		page, _ := strconv.Atoi(c.PostForm("page"))
+		limit, _ := strconv.Atoi(c.PostForm("limit"))
+		role := make([]model.ConsoleManagementData, 0)
+		Db := mysql.DB
+		var total int64
+		Db.Table("console_management_data").Count(&total)
+		Db = Db.Model(&model.ConsoleManagementData{}).Offset((page - 1) * limit).Limit(limit).Order("created desc")
+		err := Db.Find(&role).Error
+		if err != nil {
+			tools.ReturnError101(c, "ERR:"+err.Error())
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"code":  0,
+			"count": total,
+			"data":  role,
+		})
+		return
+	}
 }

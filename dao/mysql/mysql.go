@@ -66,6 +66,7 @@ func Init() error {
 	model.CheckIsExistModelBackLog(DB)
 	model.CheckIsExistModelAccountChange(DB)
 	model.CheckIsExistModelBalanceChange(DB)
+	model.CheckIsExistModelConsoleManagementData(DB)
 	////////////////////////////////////////////////////////////////
 
 	return nil

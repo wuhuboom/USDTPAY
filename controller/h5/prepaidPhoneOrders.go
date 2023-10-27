@@ -150,7 +150,7 @@ func CreatePrepaidPhoneOrders(c *gin.Context) {
 		RechargeType:    jsonData.RechargeType,
 		BackUrl:         jsonData.BackUrl,
 		ThreeOrder:      time.Now().Format("20060102150405") + strconv.Itoa(rand.Intn(100000)),
-		Status:          1, Created: time.Now().Unix()}
+		Status:          1, Created: time.Now().Unix(), Date: time.Now().Format("2006-01-02")}
 	err = mysql.DB.Save(&p).Error
 	if err != nil {
 		zap.L().Debug(tools.SetPrintStyle("CreatePrepaidPhoneOrders", 88, err.Error()))

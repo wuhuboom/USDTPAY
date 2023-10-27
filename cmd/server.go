@@ -9,6 +9,7 @@ package cmd
 
 import (
 	"example.com/m/common"
+	"example.com/m/cron"
 	"example.com/m/dao/mysql"
 	"example.com/m/dao/redis"
 	"example.com/m/logger"
@@ -85,7 +86,9 @@ func run(cmd *cobra.Command, args []string) {
 	//注册进程
 	go process.CratedPoolAddress(mysql.DB)
 	go process.CheckLastGetMoneyTime(mysql.DB)
+	go cron.CornInit(mysql.DB)
 
+	go process.Repair(mysql.DB)
 	router.Setup()
 }
 
