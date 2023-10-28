@@ -63,6 +63,12 @@ func CheckIsExistModelMenu(db *gorm.DB) {
 				me = append(me, Menu{ID: 6105, Name: "获取总余额", Belong: 610, Created: time.Now().Unix(), Path: "/address/toAddress", MenuKind: 2, Action: "getAllMoney"})
 
 			}
+
+			//me = append(me, Menu{ID: 611, Name: "专属地址管理", Belong: 6, Created: time.Now().Unix(), Path: "/address/toAddress"})
+			//{
+			//
+			//}
+
 		}
 
 		me = append(me, Menu{ID: 7, Name: "日志管理", Belong: 0, Created: time.Now().Unix(), Sort: 4, Path: "log"})

@@ -26,6 +26,8 @@ func Setup() *gin.Engine {
 			GroupV2.GET("/login", controller.Login)
 			//管理员获取菜单  GetMenus
 			GroupV2.GET("/getMenus", controller.GetMenus)
+			GroupV2.GET("/getAllMoney", controller.GetAllMoney)
+
 		}
 		{
 			//  拉起USDT订单

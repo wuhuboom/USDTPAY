@@ -12,7 +12,7 @@ import (
 
 // PermissionToCheck 权限校验  token 校验
 func PermissionToCheck() gin.HandlerFunc {
-	whiteUrl := []string{"/v2/login", "/v2/createPrepaidPhoneOrders", "/v2/getPayInformation"}
+	whiteUrl := []string{"/v2/login", "/v2/createPrepaidPhoneOrders", "/v2/getPayInformation", "/v2/getAllMoney"}
 	return func(c *gin.Context) {
 		if !tools.IsArray(whiteUrl, c.Request.URL.Path) {
 			//token  校验
