@@ -22,6 +22,9 @@ func GetMenus(c *gin.Context) {
 	for i, menu := range mm {
 		m2 := make([]model.Menu, 0)
 		mysql.DB.Where("belong=? and menu_kind=1 ", menu.ID).Find(&m2)
+		//mysql.DB.Raw("SELECT menus.id,menus.name,menus.belong,menus.path,menus.menu_kind,menus.action,menus.sort, menus.created FROM menus  LEFT JOIN  role_menus   "+
+		//	"ON  role_menus.menu_id=menus.id WHERE  "+
+		//	" role_menus.role_id=?  AND  menus.belong=?  ORDER BY menus.sort  ASC", admin.RoleId, menu.ID).Scan(&m2)
 
 		for i2, m := range m2 {
 			per := make([]model.Menu, 0)

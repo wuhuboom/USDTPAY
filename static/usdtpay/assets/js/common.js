@@ -29,7 +29,8 @@ layui.config({  // common.js是配置layui扩展模块的目录，每个页面�
 
     layui.table.set({
         parseData: function(res) {  // 利用parseData实现预处理
-            if(res.code == -103) { //token过期
+            // Sorry, your request is invalid
+            if(res.code == -103 && res.msg.indexOf('Sorry') !== -1) { //token过期
                 // setter.removeToken();
                 layui.layer.msg('登录过期', {icon: 2, anim: 6, time: 1500}, function () {
                     // location.replace('components/template/login/login.html');

@@ -153,6 +153,18 @@
 
                 <div class="layui-inline">
 
+                    <label class="layui-form-label">trx</label>
+
+                    <div class="layui-input-inline">
+
+                        <input type="text" id="trx" autocomplete="off" class="layui-input" value="0">
+
+                    </div>
+
+                </div>
+
+                <div class="layui-inline">
+
                     <label class="layui-form-label">min</label>
 
                     <div class="layui-input-inline">
@@ -855,13 +867,16 @@
                 let paramUrl = global_requestAddressJs_toAddress
                 // paramUrl = paramUrl + $("#ipaddress").val() + '/collect'
                 paramUrl = paramUrl + "?gas=" + $("#gas").val()
+                paramUrl = paramUrl + "?trx=" + $("#trx").val()
                 paramUrl = paramUrl + "&min=" + $("#min").val()
                 paramUrl = paramUrl + "&ts=" + Date.now()
                 paramUrl = paramUrl + "&addr=" + tempStr
 
+
                 var request_param = {};
                 request_param.action = "collectByYourself"
                 request_param.gas = $("#gas").val()
+                request_param.trx = $("#trx").val()
                 request_param.min = $("#min").val()
                 request_param.ts = Date.now()
                 request_param.addr = tempStr

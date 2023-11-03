@@ -149,9 +149,9 @@
 <!--数据表格操作工具栏-->
 <script type="text/html" id="orderListBar">
     {{# if (d.three_back == "1") { }}
-    <a class="layui-btn layui-btn-sm " lay-event="rechargebtn"><i class="layui-icon">&#xe605;</i>回调</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="rechargebtn"><i class="layui-icon">&#xe605;</i>回调</a>
     {{#} }}
-    <!--    <a class="layui-btn layui-btn-xs " lay-event="changebtn"><i class="layui-icon">&#xe605;</i>修改</a>-->
+        <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="order_tips"><i class="layui-icon">&#xe60b;</i>查看</a>
     <!--    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delbtn"><i class="layui-icon">&#x1006;</i>删除</a>-->
 </script>
 
@@ -346,14 +346,16 @@
                 var col = [[
                     // {type: "checkbox", width: 50},
                     {field: 'id', width: 80, title: 'ID', align: "center", sort: true},
-                    {field: 'platform_order', width: 300, title: '平台订单号', align: "center"},
-                    {field: 'three_order', width: 300, title: '三方平台订单号', sort: true, align: "center"},
-                    {field: 'account_orders', width: 100, title: '订单充值金额', align: "center"},
-                    {field: 'collection_address', title: '转账地址(玩家地址)', minWidth: 300, align: "center"},
-                    {field: 'remark', title: '备注', edit: 'text', sort: true, align: "center"},
-                    {field: 'recharge_address', width: 300, title: '收账地址', sort: true, align: "center"},
-                    {field: 'recharge_type', width: 100, title: '充值类型', sort: true, align: "center"},
                     {field: 'username', width: 100, title: '用户ID', align: "center"},
+                    {field: 'platform_order', width: 300, title: '平台订单号', align: "center", templet: function (d) {
+                            var state = "";
+                            state = d.platform_order + '<a lay-event="order_tips"> <i class="layui-icon layui-icon-about"></i></a>'
+
+                            return state;
+                        }
+
+                    },
+                    {field: 'account_orders', width: 100, title: '订单充值金额', align: "center"},
                     {field: 'account_practical', width: 120, title: '实际回调金额', align: "center"},
                     {
                         field: 'status', width: 100, title: '订单状态', align: "center", templet: function (d) {
@@ -370,6 +372,12 @@
                         }
 
                     },
+
+                    {field: 'three_order', width: 300, title: '三方平台订单号', sort: true, align: "center",hide:true},
+                    {field: 'collection_address', title: '转账地址(玩家地址)', minWidth: 300, align: "center",hide:true},
+                    {field: 'remark', title: '备注', edit: 'text', sort: true, align: "center",hide:true},
+                    {field: 'recharge_address', width: 300, title: '收账地址', sort: true, align: "center",hide:true},
+                    {field: 'recharge_type', width: 100, title: '充值类型', sort: true, align: "center",hide:true},
                     {
                         field: 'three_back', width: 100, title: '是否回调', align: "center", toolbar: '#currentThreeBack'
 
@@ -380,6 +388,7 @@
                         title: '区块时间',
                         sort: true,
                         align: "center",
+                        hide:true,
                         templet: function (d) {
                             // console.log("111",moment(1697963312 * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss'))
                             return moment(d.successfully * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
@@ -387,17 +396,17 @@
                         sort: true
                     },
                     {
-                        field: 'created', width: 200, title: '入库时间', align: "center", templet: function (d) {
+                        field: 'created', width: 200, title: '创建时间', align: "center", templet: function (d) {
                             // return util.toDateString(d.Created* 1000);
                             return moment(d.created * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
                         }, sort: true
                     },
-                    // {
-                    //     field: 'updated_at', title: '更新时间',align:"center", templet: function (d) {
-                    //         return util.toDateString(d.updated_at* 1000);
-                    //     }, sort: true
-                    // },
-                    {title: '操作', width:100, templet:'#orderListBar',fixed:"right",align:"center"}
+                    {
+                        field: 'updated', title: '更新时间',align:"center", templet: function (d) {
+                            return moment(d.updated * 1000).utc().utcOffset(currTimeZoneValue).format('YYYY-MM-DD HH:mm:ss');
+                        }, sort: true
+                    },
+                    {title: '操作', width:180, templet:'#orderListBar',fixed:"right",align:"center"}
                 ]]
                 return col;
             }
@@ -798,7 +807,38 @@
                     });
 
 
-                } else if (obj.event === 'detailBtn') {
+                } if(obj.event === 'order_tips'){
+                    // layer.alert(layui.util.escape(JSON.stringify(obj.data)), {
+                    //     title: '当前列属性配置项'
+                    // });
+
+                    jsondata = JSON.stringify(currDatas)
+
+                    var index = layui.layer.open({
+                        area: ['1200px', '750px'],
+                        // area: ['1200px','600px'],
+                        fixed: false, //不固定
+                        maxmin: false,
+                        title : "订单详情",
+                        skin: 'layui-layer-rim',//加上边框
+                        type : 2,
+                        content : "detailinfo.html",
+                        success : function(layero, index){
+                            var body = layui.layer.getChildFrame('body', index);
+                            if(currDatas) {
+
+                            }
+                        },
+                        end : function() {//弹窗关闭后的回调函数
+                            //利用laypage实现局部刷新,以下两种方式都可以
+                            // $(".layui-laypage-btn").click()
+                            //直接刷新当前修改的行
+                            // $(".layui-laypage-btn")[0].click()
+
+                        }
+                    })
+
+                }else if (obj.event === 'detailBtn') {
 
                     jsondata = JSON.stringify(currDatas)
                     var index = layui.layer.open({

@@ -168,6 +168,7 @@ func ToAddress(c *gin.Context) {
 		//		req["addr"] = addArray
 		//	}
 		//}
+		req["trx"], _ = strconv.ParseInt(c.PostForm("trx")+"000000", 10, 64)
 		req["addr"] = c.PostForm("addr")
 		req["ts"] = time.Now().UnixMilli()
 		_, err := tools.HttpRequest(viper.GetString("project.ThreeUrl")+"/collect", req, viper.GetString("project.ApiKey"))
