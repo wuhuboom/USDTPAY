@@ -34,7 +34,7 @@ type PrepaidPhoneOrders struct {
 	RechargeType      string  `json:"recharge_type"`                               //充值类型
 	TxHash            string  `json:"tx_hash"`                                     //回调的hash值
 	BackData          string  `gorm:"type:text" json:"back_data"`                  //回调数据
-	FootballBackData  string  `json:"football_back_data"`                          //返回数据
+	FootballBackData  string  `json:"football_back_data" gorm:"type:text"`         //返回数据
 	ErrString         string  `json:"err_string"`                                  //错误信息
 }
 

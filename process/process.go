@@ -5,6 +5,7 @@ import (
 	"example.com/m/model"
 	"example.com/m/tools"
 	"fmt"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"io/ioutil"
@@ -204,4 +205,29 @@ func Repair(db *gorm.DB) {
 	}
 
 	fmt.Println("修复完毕")
+}
+
+// BlockCheck 区块订单检查 到账检查
+func BlockCheck(db *gorm.DB, redis *redis.Client) {
+
+	//url := fmt.Sprintf("https://apilist.tronscanapi.com/api/transaction?sort=-timestamp&count=true&limit=50&start=%d&block=56239111", 0)
+	//req, err := http.NewRequest("GET", url, nil)
+	//req.Header.Set("TRON-PRO-API-KEY", viper.GetString("app.TronApiKey"))
+	//if err != nil {
+	//	continue
+	//}
+	//req.Header.Add("accept", "application/json")
+	//res, err := http.DefaultClient.Do(req)
+	//if err != nil {
+	//	continue
+	//}
+	//body, err := ioutil.ReadAll(res.Body)
+	//if err != nil {
+	//	continue
+	//}
+	//var tt1 Ta
+	//err = json.Unmarshal(body, &tt1)
+	//if err != nil {
+	//	continue
+	//}
 }
