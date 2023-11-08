@@ -26,6 +26,14 @@ type ReceiveAddress struct {
 	Updated             int64   `json:"updated"`
 }
 
+func (r *ReceiveAddress) IsExist(db *gorm.DB) (bool, *ReceiveAddress) {
+	affected := db.Where("address=?", r.Address).Limit(1).Find(r).RowsAffected
+	if affected > 0 {
+		return true, r
+	}
+	return false, r
+}
+
 func CheckIsExistModelReceiveAddress(db *gorm.DB) {
 	if db.Migrator().HasTable(&ReceiveAddress{}) {
 		fmt.Println("数据库已经存在了!")

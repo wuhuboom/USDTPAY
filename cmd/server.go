@@ -88,7 +88,9 @@ func run(cmd *cobra.Command, args []string) {
 	go process.CheckLastGetMoneyTime(mysql.DB)
 	go cron.CornInit(mysql.DB)
 
+	//go process.BlockCheck(mysql.DB, 56239111)
 	//	go process.Repair(mysql.DB)
+	//go process.BlockCheckFromTo(mysql.DB, redis.Rdb)
 	router.Setup()
 }
 
