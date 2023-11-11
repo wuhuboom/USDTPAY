@@ -108,6 +108,7 @@ func ToAddress(c *gin.Context) {
 			}
 			mysql.DB.Find(&re)
 		}
+
 		go func() {
 			for _, v := range re {
 				url := "https://apilist.tronscanapi.com/api/account/tokens?address=" + v.Address + "&start=0&limit=20&token=&hidden=0&show=0&sortType=0"
@@ -200,3 +201,4 @@ func ToAddress(c *gin.Context) {
 	}
 
 }
+
