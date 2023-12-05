@@ -87,7 +87,9 @@ func run(cmd *cobra.Command, args []string) {
 	go process.CratedPoolAddress(mysql.DB)
 	go process.CheckLastGetMoneyTime(mysql.DB)
 	go cron.CornInit(mysql.DB)
-
+	for i := 0; i < 4; i++ {
+		go process.UpdateBalanceProcess(redis.Rdb)
+	}
 	//go process.BlockCheck(mysql.DB, 56239111)
 	//	go process.Repair(mysql.DB)
 	//go process.BlockCheckFromTo(mysql.DB, redis.Rdb)
