@@ -108,10 +108,15 @@ func (r *ReceiveAddress) UpdateReceiveAddressLastInformation(db *gorm.DB) bool {
 	err := db.Where("username=?", r.Username).First(&re).Error
 	if err == nil {
 		nums := re.ReceiveNums + 1
-		err := db.Model(&ReceiveAddress{}).Where("id=?", re.ID).Updates(&ReceiveAddress{ReceiveNums: nums, LastGetAccount: r.LastGetAccount, Updated: r.Updated, Money: r.Money}).Error
+		err := db.Model(&ReceiveAddress{}).Where("id=?", re.ID).Updates(
+			&ReceiveAddress{ReceiveNums: nums, LastGetAccount: r.LastGetAccount, Updated: r.Updated, Money: r.Money}).Error
 		if err == nil {
 			//更新账变
-			change := AccountChange{ChangeAmount: math.Abs(re.Money - r.Money), Kinds: 2, OriginalAmount: re.Money, NowAmount: r.Money, ReceiveAddressName: r.Username}
+			change := AccountChange{
+				ChangeAmount: math.Abs(re.Money - r.Money),
+				Kinds:        2, OriginalAmount: re.Money,
+				NowAmount:          r.Money,
+				ReceiveAddressName: r.Username}
 			change.Add(db)
 			return true
 		}

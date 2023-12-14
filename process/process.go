@@ -7,11 +7,16 @@ import (
 	"example.com/m/model"
 	"example.com/m/tools"
 	"fmt"
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
+	"io"
 	"io/ioutil"
+	"math"
+	"math/big"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -753,4 +758,173 @@ type GetNewBlockData struct {
 		VoteReward     int     `json:"voteReward"`
 		Revert         bool    `json:"revert"`
 	} `json:"data"`
+}
+
+var UpdateBalanceProcessChan = make(chan int)
+
+func UpdateBalanceProcess(redis *redis.Client) {
+	c := context.Background()
+	for {
+		add, err := redis.RPop(c, "updateMoney").Result()
+		if err == nil {
+			var re model.ReceiveAddress
+			err := json.Unmarshal([]byte(add), &re)
+			if err != nil {
+				break
+			}
+			//UpdateBalance(re)
+
+			UpdateBalance2(re)
+			//fmt.Println(re)
+		}
+		time.Sleep(time.Second * 1)
+
+	}
+}
+
+func UpdateBalance(v model.ReceiveAddress) {
+	url := "https://apilist.tronscanapi.com/api/account/tokens?address=" + v.Address + "&start=0&limit=20&token=&hidden=0&show=0&sortType=0"
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("accept", "application/json")
+	req.Header.Set("TRON-PRO-API-KEY", viper.GetString("project.TronApiKey"))
+	res, _ := http.DefaultClient.Do(req)
+	body, _ := ioutil.ReadAll(res.Body)
+	fmt.Println(string(body))
+	var tt2 Ta2
+	err := json.Unmarshal(body, &tt2)
+	if err != nil {
+		return
+	}
+	var newMoney float64
+	newMoney = 0
+	for _, datum := range tt2.Data {
+		if datum.TokenId == "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" {
+			newMoney, _ = tools.ToDecimal(datum.Balance, 6).Float64()
+		}
+	}
+	//fmt.Printf("余额:%f", tt1.Data[0].AssetInUsd)
+	//usd := ToDecimal(arrayA[1], 6)
+	////更新数据
+	ups := make(map[string]interface{})
+	ups["Money"] = newMoney
+	ups["Updated"] = time.Now().Unix()
+	err = mysql.DB.Model(model.ReceiveAddress{}).Where("id=?", v.ID).Updates(ups).Error
+	fmt.Println(newMoney)
+	//调动 余额变动
+	if math.Abs(newMoney-v.Money) > 1 {
+		change := model.AccountChange{ChangeAmount: math.Abs(newMoney - v.Money), Kinds: 1, OriginalAmount: v.Money, NowAmount: newMoney, ReceiveAddressName: v.Username}
+		change.Add(mysql.DB)
+	}
+	if err != nil {
+		fmt.Println("更新失败")
+	}
+	time.Sleep(1 * time.Second)
+}
+
+func UpdateBalance2(v model.ReceiveAddress) {
+	url := "https://api.trongrid.io/wallet/triggersmartcontract"
+	hexAddress, err := base58ToHex(v.Address)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	jsonData := `{
+	   "visible": true,
+	   "call_value": 0,
+	   "function_selector": "balanceOf(address)",
+	   "owner_address": "` + v.Address + `",
+	   "fee_limit": 1000000000,
+	   "contract_address": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+	   "parameter": "00000000` + hexAddress + `"
+	}`
+	//fmt.Println(jsonData)
+	payload := strings.NewReader(jsonData)
+	req, _ := http.NewRequest("POST", url, payload)
+	req.Header.Add("accept", "application/json")
+	req.Header.Add("content-type", "application/json")
+	req.Header.Add("TRON-PRO-API-KEY", "6efbfebb-c0c4-4363-ab2b-96b7e50b694a")
+	res, _ := http.DefaultClient.Do(req)
+	defer res.Body.Close()
+	body, _ := io.ReadAll(res.Body)
+
+	var ud UpdateBalance2Data
+	err = json.Unmarshal(body, &ud)
+	if err != nil {
+		fmt.Println("852" + err.Error())
+		return
+	}
+	fmt.Println(v.Address)
+	fmt.Println(ud.ConstantResult[0])
+	decimal, err := toDecimal(ud.ConstantResult[0])
+	if err != nil {
+		fmt.Println("Failed to convert hex to decimal:", err)
+		return
+	}
+	divisor := big.NewInt(1000000)
+	//fmt.Println(new(big.Int).Div(decimal, divisor))
+	newMoney, _ := new(big.Int).Div(decimal, divisor).Float64()
+	ups := make(map[string]interface{})
+	ups["Money"] = newMoney
+	ups["Updated"] = time.Now().Unix()
+	err = mysql.DB.Model(model.ReceiveAddress{}).Where("id=?", v.ID).Updates(ups).Error
+	fmt.Println(newMoney)
+	//调动 余额变动
+	if math.Abs(newMoney-v.Money) > 1 {
+		change := model.AccountChange{ChangeAmount: math.Abs(newMoney - v.Money), Kinds: 1, OriginalAmount: v.Money, NowAmount: newMoney, ReceiveAddressName: v.Username}
+		change.Add(mysql.DB)
+	}
+	if err != nil {
+		fmt.Println("更新失败")
+	}
+
+}
+
+type UpdateBalance2Data struct {
+	Result struct {
+		Result bool `json:"result"`
+	} `json:"result"`
+	EnergyUsed     int      `json:"energy_used"`
+	ConstantResult []string `json:"constant_result"`
+	EnergyPenalty  int      `json:"energy_penalty"`
+	Transaction    struct {
+		Ret []struct {
+		} `json:"ret"`
+		Visible bool   `json:"visible"`
+		TxID    string `json:"txID"`
+		RawData struct {
+			Contract []struct {
+				Parameter struct {
+					Value struct {
+						Data            string `json:"data"`
+						OwnerAddress    string `json:"owner_address"`
+						ContractAddress string `json:"contract_address"`
+					} `json:"value"`
+					TypeUrl string `json:"type_url"`
+				} `json:"parameter"`
+				Type string `json:"type"`
+			} `json:"contract"`
+			RefBlockBytes string `json:"ref_block_bytes"`
+			RefBlockHash  string `json:"ref_block_hash"`
+			Expiration    int64  `json:"expiration"`
+			FeeLimit      int    `json:"fee_limit"`
+			Timestamp     int64  `json:"timestamp"`
+		} `json:"raw_data"`
+		RawDataHex string `json:"raw_data_hex"`
+	} `json:"transaction"`
+}
+
+func base58ToHex(base58Addr string) (string, error) {
+	//00000000000000411d44658e2acbaf0b1f0c2ccb69904f470b6b27a16dbd8abe
+	decoded := base58.Decode(base58Addr)
+	hexAddr := fmt.Sprintf("%064x", decoded)
+	return hexAddr[0 : len(hexAddr)-8], nil
+}
+func toDecimal(hexString string) (*big.Int, error) {
+	hexString = strings.TrimPrefix(hexString, "0x")
+	decimal := new(big.Int)
+	_, success := decimal.SetString(hexString, 16)
+	if !success {
+		return nil, fmt.Errorf("Failed to convert hex string to decimal")
+	}
+	return decimal, nil
 }

@@ -102,7 +102,7 @@ func (p *PrepaidPhoneOrders) UpdateMaxCreatedOfStatusToTwo(db *gorm.DB, OrderEff
 			db.Model(&PrepaidPhoneOrders{}).Where("id=?", pp.ID).Updates(&update)
 			return true
 		} else {
-			db.Model(&PrepaidPhoneOrders{}).Where("id=?", pp.ID).Updates(&PrepaidPhoneOrders{Status: 3})
+			db.Model(&PrepaidPhoneOrders{}).Where("id=?", pp.ID).Updates(&PrepaidPhoneOrders{Status: 3, Updated: time.Now().Unix()})
 			return false
 		}
 	}
