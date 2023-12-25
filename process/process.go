@@ -22,6 +22,10 @@ import (
 
 func CratedPoolAddress(db *gorm.DB) {
 	for true {
+
+		if viper.GetString("Project.ModelA") == "no" {
+			return
+		}
 		var pondSize int64
 		db.Model(&model.ReceiveAddress{}).Where("kinds=?", 2).Count(&pondSize) //3
 		//admin := model.Admin{}
