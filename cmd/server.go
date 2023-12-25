@@ -34,6 +34,7 @@ var (
 	daemon   bool
 	rootPath string
 )
+
 var serverCmd = &cobra.Command{
 	Use:     "server",
 	Short:   "启动服务器",

@@ -62,85 +62,89 @@ func CreatePrepaidPhoneOrders(c *gin.Context) {
 		tools.ReturnError101(c, "不要重复提交")
 		return
 	}
-
-	//判断这个玩家是否有专属地址
 	re := model.ReceiveAddress{}
-	rowsAffected := mysql.DB.Where("username=?", jsonData.Username).Limit(1).Find(&re).RowsAffected
-	if rowsAffected == 0 {
-		//用户不存在  判断金额 是去池子里面获取 还是生成专属地址
-		config := model.Config{}
-		config.GetConfig(mysql.DB)
-		//获取配置文件
-		fmt.Println(config)
-		// 订单金额小于设置金额   要从池中获取地址
-		if jsonData.AccountOrders <= config.PondAmount {
-			//判断是否有已在使用的地址并且没有过期
-			pp := model.PrepaidPhoneOrders{}
-			err := mysql.DB.
-				Where("username=? and created >  ? and account_orders <= ?",
-					jsonData.Username, time.Now().Unix()-config.Expiration*60, config.PondAmount).
-				First(&pp).Error
+	if viper.GetString("project.ModelA") != "no" {
+		//判断这个玩家是否有专属地址
+		rowsAffected := mysql.DB.Where("username=?", jsonData.Username).Limit(1).Find(&re).RowsAffected
+		if rowsAffected == 0 {
+			//用户不存在  判断金额 是去池子里面获取 还是生成专属地址
+			config := model.Config{}
+			config.GetConfig(mysql.DB)
+			//获取配置文件
+			fmt.Println(config)
+			// 订单金额小于设置金额   要从池中获取地址
+			if jsonData.AccountOrders <= config.PondAmount {
+				//判断是否有已在使用的地址并且没有过期
+				pp := model.PrepaidPhoneOrders{}
+				err := mysql.DB.
+					Where("username=? and created >  ? and account_orders <= ?",
+						jsonData.Username, time.Now().Unix()-config.Expiration*60, config.PondAmount).
+					First(&pp).Error
 
-			if err == nil {
-				//地址还未过期重复使用这个地址
-				mysql.DB.Where("address=?", pp.RechargeAddress).First(&re)
-				//更新地址库这个地址的最后一次使用时间
-				mysql.DB.Model(&model.ReceiveAddress{}).Where("address=?", pp.RechargeAddress).Updates(
-					&model.ReceiveAddress{
-						LastUseTime: time.Now().Unix() + config.Expiration*60,
-						ReceiveNums: re.ReceiveNums + 1})
-			} else {
-				//随机获取一个最新的地址给玩家
-				GetAddressLock.Lock()
-				err = mysql.DB.
-					Where("kinds=? and last_use_time < ? and status=?",
-						2, time.Now().Unix(), 1).
-					Order("receive_nums asc").First(&re).Error
-
-				//池里面没有地址
-				if err != nil {
-					//寻找没有开启的地址
-					err = mysql.DB.Where("kinds=? and last_use_time < ? and status=?",
-						2, time.Now().Unix(), 2).
-						Order("receive_nums asc").First(&re).Error
-					if err != nil {
-						//如果池地址是满的状态要提现管理员添加地址  后期做成飞机警报
-						//model.Log{Ips: c.ClientIP(),Content: ""}
-						tools.ReturnError101(c, "There are no more addresses in the pool")
-						GetAddressLock.Unlock()
-						return
-					}
-				} else {
-					//更新地址的最新
-					mysql.DB.Model(&model.ReceiveAddress{}).Where("id=?", re.ID).Updates(
+				if err == nil {
+					//地址还未过期重复使用这个地址
+					mysql.DB.Where("address=?", pp.RechargeAddress).First(&re)
+					//更新地址库这个地址的最后一次使用时间
+					mysql.DB.Model(&model.ReceiveAddress{}).Where("address=?", pp.RechargeAddress).Updates(
 						&model.ReceiveAddress{
 							LastUseTime: time.Now().Unix() + config.Expiration*60,
 							ReceiveNums: re.ReceiveNums + 1})
-					GetAddressLock.Unlock()
-					//生成地址日志
-					logs := model.Log{Kinds: 3, Ips: c.ClientIP(), Content: fmt.Sprintf("玩家:%s,成功获取地址:%s", jsonData.Username, re.Address)}
-					logs.CreatedLogs(mysql.DB)
-				}
+				} else {
+					//随机获取一个最新的地址给玩家
+					GetAddressLock.Lock()
+					err = mysql.DB.
+						Where("kinds=? and last_use_time < ? and status=?",
+							2, time.Now().Unix(), 1).
+						Order("receive_nums asc").First(&re).Error
 
+					//池里面没有地址
+					if err != nil {
+						//寻找没有开启的地址
+						err = mysql.DB.Where("kinds=? and last_use_time < ? and status=?",
+							2, time.Now().Unix(), 2).
+							Order("receive_nums asc").First(&re).Error
+						if err != nil {
+							//如果池地址是满的状态要提现管理员添加地址  后期做成飞机警报
+							//model.Log{Ips: c.ClientIP(),Content: ""}
+							tools.ReturnError101(c, "There are no more addresses in the pool")
+							GetAddressLock.Unlock()
+							return
+						}
+					} else {
+						//更新地址的最新
+						mysql.DB.Model(&model.ReceiveAddress{}).Where("id=?", re.ID).Updates(
+							&model.ReceiveAddress{
+								LastUseTime: time.Now().Unix() + config.Expiration*60,
+								ReceiveNums: re.ReceiveNums + 1})
+						GetAddressLock.Unlock()
+						//生成地址日志
+						logs := model.Log{Kinds: 3, Ips: c.ClientIP(), Content: fmt.Sprintf("玩家:%s,成功获取地址:%s", jsonData.Username, re.Address)}
+						logs.CreatedLogs(mysql.DB)
+					}
+
+				}
+			} else {
+				//大于这个金额生成 专属地址
+				re.Username = jsonData.Username
+				re.CreateUsername(mysql.DB, viper.GetString("project.ThreeUrl"))
+				if re.Address == "" {
+					tools.ReturnError101(c, "返回空的地址,稍后重试-1")
+					//生成 地址日志
+					log := model.Log{Ips: c.ClientIP(),
+						Content: fmt.Sprintf("用户:%s,获取专属地址失败,获取连接:%s,ip:%s", re.Username, viper.GetString("eth.ThreeUrl"), c.ClientIP()),
+						Kinds:   2}
+					log.CreatedLogs(mysql.DB)
+					return
+				}
+				//生成地址日志
+				logs := model.Log{Kinds: 3, Ips: c.ClientIP(), Content: fmt.Sprintf("玩家:%s,成功获取地址:%s", jsonData.Username, re.Address)}
+				logs.CreatedLogs(mysql.DB)
 			}
-		} else {
-			//大于这个金额生成 专属地址
-			re.Username = jsonData.Username
-			re.CreateUsername(mysql.DB, viper.GetString("project.ThreeUrl"))
-			if re.Address == "" {
-				tools.ReturnError101(c, "返回空的地址,稍后重试-1")
-				//生成 地址日志
-				log := model.Log{Ips: c.ClientIP(),
-					Content: fmt.Sprintf("用户:%s,获取专属地址失败,获取连接:%s,ip:%s", re.Username, viper.GetString("eth.ThreeUrl"), c.ClientIP()),
-					Kinds:   2}
-				log.CreatedLogs(mysql.DB)
-				return
-			}
-			//生成地址日志
-			logs := model.Log{Kinds: 3, Ips: c.ClientIP(), Content: fmt.Sprintf("玩家:%s,成功获取地址:%s", jsonData.Username, re.Address)}
-			logs.CreatedLogs(mysql.DB)
 		}
+	} else {
+		re.Address = viper.GetString("project.Address")
 	}
+
 	//生成充值订单
 	p := model.PrepaidPhoneOrders{
 		PlatformOrder:   jsonData.PlatformOrder,
