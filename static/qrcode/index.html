@@ -11,48 +11,50 @@
 </head>
 
 <body>
-   <div class="content">
+<div class="content">
     <div class="top" onclick="javascript:history.go(-1)">
-      <img src="./img/back.png" width="25" height="20" >
+        <img src="./img/back.png" width="25" height="20" >
     </div>
-  <div class="qrcode">
-  <div class="qr-code-c">
-      <div id="qrcode"></div>
-  </div>
-    <div class="font-qode">Copy the address or use the QR code to make a deposit.</div>
-    <div class="address" >
-      <div class="address-c" id="address"></div>
-      <div class="btn" onclick="copyTo()">Copy</div>
+    <div class="qrcode">
+        <div class="qr-code-c">
+            <div id="qrcode"></div>
+        </div>
+        <div class="font-qode">Copy the address or use the QR code to make a deposit.</div>
+        <div class="amount" id="amount">500</div>
+        <div class="address" >
+            <div class="address-c" id="address"></div>
+            <div class="btn" onclick="copyTo()">Copy</div>
+        </div>
     </div>
-  </div>
-   </div>
+</div>
 </body>
 
 </html>
 
 <script type="text/javascript">
 
-  var queryStr = location.search.split("?")[1];
+    var queryStr = location.search.split("?")[1];
     var paramt = queryStr.split("&");
     var obj = {};
     for (let i = 0; i < paramt.length; i++) {
-      let g = paramt[i].split("=");
-      obj[g[0]] = g[1];
+        let g = paramt[i].split("=");
+        obj[g[0]] = g[1];
     }
     console.log();
 
-  var qrcode = new QRCode(document.getElementById("qrcode"), {
-      width: 150,
-      height: 150
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width: 150,
+        height: 150
     });
-  function makeCode() {
-    if(obj.Address){
-      $("#address").html(obj.Address);
-      qrcode.makeCode(obj.Address);
+    function makeCode() {
+        if(obj.Address){
+            $("#amount").html(obj.AccountOrders+" USDT");
+            $("#address").html(obj.Address);
+            qrcode.makeCode(obj.Address);
+        }
     }
-  }
 
-  makeCode();
+    makeCode();
 
     function copyTo() {
         var oInput = document.createElement('input');
@@ -64,97 +66,101 @@
         message.add("success", "success");
 
         //  $.growl.notice({ title: "", message: "success!" });
-      }
+    }
 
 
-  var message = new MyMessage.message({
-    iconFontSize: "20px",
-    messageFontSize: "14px",
-    showTime: 3000,
-    align: "center",
-    positions: {
-      top: "45%",
-      bottom: "10px",
-      right: "10px",
-      left: "10px"
-    },
-    message: "success",
-    type: "normal",
-  });
+    var message = new MyMessage.message({
+        iconFontSize: "20px",
+        messageFontSize: "14px",
+        showTime: 3000,
+        align: "center",
+        positions: {
+            top: "45%",
+            bottom: "10px",
+            right: "10px",
+            left: "10px"
+        },
+        message: "success",
+        type: "normal",
+    });
 
 </script>
 
 <style>
-body {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-@media screen and (max-width: 480px) {
-    .main {
-    width: 100%;
+    body {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
     }
-}
-@import url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
-.content{
-min-height: 100vh;
-background-color: rgb(31,37,47);
- padding: 0 20px 0 20px;
-}
-.top{
-  padding-top: 20px;
-}
-.qrcode{
-  margin-top: 50px;
-  width: 100%;
-  height: 350px;
-  border: 1px rgb(202, 150, 46) solid;
-  border-radius: 8px ;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: space-around;
-}
-.qr-code-c{
- width: 164px;
- height: 164px;
- background-color: #fff;
- display: flex;
- justify-content: center;
- align-items: center;
+    @media screen and (max-width: 480px) {
+        .main {
+            width: 100%;
+        }
+    }
+    @import url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
+    .content{
+        min-height: 100vh;
+        background-color: rgb(31,37,47);
+        padding: 0 20px 0 20px;
+    }
+    .top{
+        padding-top: 20px;
+    }
+    .qrcode{
+        margin-top: 50px;
+        width: 100%;
+        height: 350px;
+        border: 1px rgb(202, 150, 46) solid;
+        border-radius: 8px ;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+    .qr-code-c{
+        width: 164px;
+        height: 164px;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-}
-.font-qode{
-  width: 164px;
-  transform: translate(187.5, 337.596);
-  color: rgb(100, 116, 139);
-  font-size: 12px;
-  text-align: center;
-}
-.address{
-  width: 90%;
-  height: 62px;
-  background-color: rgb(50,50,50);
-  border-radius: 8px ;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-.address-c{
-  width: 60%;
-  font-size: 12px;
-  color: #fff;
-  overflow-wrap:break-word;
-}
-.btn{
-  width: 50px;
-  line-height: 28px;
-  font-size: 13px;
-  color: #fff;
-  background-color: rgb(250,190,60);
-  text-align: center;
-  border-radius: 8px;
-}
+    }
+    .font-qode{
+        width: 164px;
+        transform: translate(187.5, 337.596);
+        color: rgb(100, 116, 139);
+        font-size: 12px;
+        text-align: center;
+    }
+    .address{
+        width: 90%;
+        height: 62px;
+        background-color: rgb(50,50,50);
+        border-radius: 8px ;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+    .amount{
+        color: #fff;
+
+    }
+    .address-c{
+        width: 60%;
+        font-size: 12px;
+        color: #fff;
+        overflow-wrap:break-word;
+    }
+    .btn{
+        width: 50px;
+        line-height: 28px;
+        font-size: 13px;
+        color: #fff;
+        background-color: rgb(250,190,60);
+        text-align: center;
+        border-radius: 8px;
+    }
 
 
 </style>
