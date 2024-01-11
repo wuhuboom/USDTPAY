@@ -113,20 +113,25 @@ func initDir() {
 // 初始化守护进程
 func initDaemon() {
 	//启动前 先杀死之前的 程序
-	pid, err := ioutil.ReadFile(viper.GetString("project.portFile"))
-	if err == nil {
-		pidSlice := strings.Split(string(pid), ",")
-		var command *exec.Cmd
-		for _, pid := range pidSlice {
-			if runtime.GOOS == "windows" {
-				command = exec.Command("taskkill.exe", "/f", "/pid", pid)
-			} else {
-				fmt.Println("成功结束进程:", pid)
-				command = exec.Command("kill", pid)
+	exist, _ := tools.IsFileExist(viper.GetString("project.portFile"))
+
+	if exist == true {
+		pid, err := ioutil.ReadFile(viper.GetString("project.portFile"))
+		if err == nil {
+			pidSlice := strings.Split(string(pid), ",")
+			var command *exec.Cmd
+			for _, pid := range pidSlice {
+				if runtime.GOOS == "windows" {
+					command = exec.Command("taskkill.exe", "/f", "/pid", pid)
+				} else {
+					fmt.Println("成功结束进程:", pid)
+					command = exec.Command("kill", pid)
+				}
+				command.Start()
 			}
-			command.Start()
 		}
 	}
+
 	if daemon == true {
 		d := xdaemon.NewDaemon(common.LogDirPath + common.LogFileName)
 		d.MaxError = 10
