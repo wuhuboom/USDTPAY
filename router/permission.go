@@ -70,12 +70,12 @@ func PathUrlToCheck() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		rowsAffected := mysql.DB.Where("role_id=? and menu_id=?", Admin.ID, menu.ID).Limit(1).Find(&model.RoleMenu{}).RowsAffected
-		if rowsAffected == 0 {
-			tools.JsonWrite(c, common.IllegalityCode, nil, "Illegal request--")
-			c.Abort()
-			return
-		}
+		//rowsAffected := mysql.DB.Where("role_id=? and menu_id=?", Admin.ID, menu.ID).Limit(1).Find(&model.RoleMenu{}).RowsAffected
+		//if rowsAffected == 0 {
+		//	tools.JsonWrite(c, common.IllegalityCode, nil, "Illegal request--")
+		//	c.Abort()
+		//	return
+		//}
 		//fmt.Println(c.Request.URL.Path)
 		c.Next()
 	}
