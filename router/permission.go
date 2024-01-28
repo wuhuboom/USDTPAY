@@ -55,8 +55,8 @@ func PermissionToCheck() gin.HandlerFunc {
 func PathUrlToCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 获取管理员
-		who, _ := c.Get("who")
-		Admin := who.(model.Admin)
+		//who, _ := c.Get("who")
+		//Admin := who.(model.Admin)
 		menu := model.Menu{}
 		action := c.PostForm("action")
 		if action == "" {
