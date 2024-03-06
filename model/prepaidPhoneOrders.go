@@ -36,6 +36,7 @@ type PrepaidPhoneOrders struct {
 	BackData          string  `gorm:"type:text" json:"back_data"`                  //回调数据
 	FootballBackData  string  `json:"football_back_data" gorm:"type:text"`         //返回数据
 	ErrString         string  `json:"err_string"`                                  //错误信息
+	OptionLogs        string  `json:"option_logs"`                                 //操作日志
 }
 
 func CheckIsExistModelPrepaidPhoneOrders(db *gorm.DB) {

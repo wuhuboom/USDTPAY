@@ -96,7 +96,11 @@ func ToAddress(c *gin.Context) {
 		if Address, isE := c.GetPostForm("address"); isE == true {
 			//tools.ReturnError200(c, "执行成功")
 			one := model.ReceiveAddress{}
-			mysql.DB.Where("address=?", Address).First(&one)
+			err := mysql.DB.Where("address=?", Address).First(&one).Error
+			if err != nil {
+				tools.ReturnError200(c, err.Error())
+				return
+			}
 			re = append(re, one)
 		} else {
 			//result, _ := redis.Rdb.SetNX(c, "getAllAddressMoney", "getAllAddressMoney", time.Hour*5).Result()
