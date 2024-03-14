@@ -859,14 +859,25 @@ func UpdateBalance2(v model.ReceiveAddress) {
 	}
 	fmt.Println(v.Address)
 	fmt.Println(ud.ConstantResult[0])
+
 	decimal, err := toDecimal(ud.ConstantResult[0])
 	if err != nil {
 		fmt.Println("Failed to convert hex to decimal:", err)
 		return
 	}
 	divisor := big.NewInt(1000000)
+
+	decimal1 := new(big.Float).SetInt(decimal)
+	divisor2 := new(big.Float).SetInt(divisor)
+	result := new(big.Float).Quo(decimal1, divisor2)
+	var newMoney float64
+	newMoney, _ = result.Float64()
+	//fmt.Println(newMoney)
 	//fmt.Println(new(big.Int).Div(decimal, divisor))
-	newMoney, _ := new(big.Int).Div(decimal, divisor).Float64()
+	//newMoney, _ := new(big.Int).Div(decimal, divisor).Float64()
+	//result := new(big.Float).Quo(new(big.Float).SetInt(decimal), new(big.Float).SetInt(divisor))
+	//newMoney := result.Text('f', 2) // 保留两位小数
+
 	ups := make(map[string]interface{})
 	ups["Money"] = newMoney
 	ups["Updated"] = time.Now().Unix()
