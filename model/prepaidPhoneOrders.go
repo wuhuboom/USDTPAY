@@ -147,7 +147,7 @@ func (p *PrepaidPhoneOrders) UpdatePondOrderCratedAndUpdated(db *gorm.DB) bool {
 	//	创建+过期  > 现在时间
 	err := db.Where("recharge_address=?", p.RechargeAddress).
 		Where("status= ? and recharge_type= ? and created > ?", 1, p.RechargeType, time.Now().Unix()-config.Expiration*60).
-		First(&pp).Error
+		Last(&pp).Error
 	if err == nil {
 		//找到了这笔订单
 		updateData := PrepaidPhoneOrders{
